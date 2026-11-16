@@ -1,0 +1,4 @@
+masukan,val_acc_epoch5,val_acc_maks,val_auc_epoch5,train_acc_epoch5
+full,81.3379,81.3379,0.8949,87.755
+roi,80.744,80.744,0.8845,87.1885
+roi+sog,81.6818,81.6818,0.8907,87.2281

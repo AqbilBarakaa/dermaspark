@@ -1,0 +1,17 @@
+{
+  "thr_global": 0.42,
+  "thr_dataset": {
+    "HAM10000": 0.44,
+    "ISIC 2017": 0.34,
+    "ISIC 2019": 0.42
+  },
+  "bobot": {
+    "utama_256": "swa"
+  },
+  "preprocessing": "roi+sog",
+  "parameter_juta": 33.075816,
+  "ms_tta": 12.20857900004333,
+  "ms_tanpa_tta": 3.7569923184486034,
+  "n_uji_baris": 3291,
+  "n_uji_unik": 3085
+}

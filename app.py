@@ -289,8 +289,7 @@ st.markdown("""
     <div class="inst-tag">Universitas Trunojoyo Madura &bull; Hibah Penelitian BIMA Kemendikbudristek</div>
     <h1 class="app-title">DERMASPARK: Sistem Skrining Citra Lesi Kulit</h1>
     <div class="app-desc">
-        Aplikasi pendukung keputusan klinis berbasis model <strong>ConvNeXtTiny-MHSA</strong> dengan pra-pemrosesan ROI Otsu dan Shades of Gray.<br>
-        <em>Peneliti: Aqbil Baraka (NIM 230411100077) &bull; Pembimbing: Fifin Ayu Mufarroha, S.Kom., M.Kom.</em>
+        Aplikasi pendukung keputusan klinis berbasis model <strong>ConvNeXtTiny-MHSA</strong> dengan pra-pemrosesan ROI Otsu dan Shades of Gray.
     </div>
 </div>
 """, unsafe_allow_html=True)

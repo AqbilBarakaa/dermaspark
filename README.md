@@ -1,8 +1,6 @@
 # ⚡ DERMASPARK
 ### Platform Evaluasi & Hasil Pengujian Model ConvNeXtTiny-MHSA
-**Asistensi Hibah Penelitian BIMA 2026 — Universitas Trunojoyo Madura**  
-*Peneliti:* Aqbil Baraka (NIM 230411100077)  
-*Pembimbing:* Fifin Ayu Mufarroha, S.Kom., M.Kom.
+**Program Hibah Penelitian BIMA 2026 — Universitas Trunojoyo Madura**  
 
 **DERMASPARK** (*Dermatology × Apache Spark*) adalah platform web interaktif berbasis Streamlit untuk menyajikan evaluasi mendalam dan ringkasan data uji terisolasi (*n* = 3.291 citra) pada model klasifikasi kanker kulit **ConvNeXtTiny-MHSA**, berstandar **AntiSlop** (fokus saintifik, metrik riil, bebas bias *Zero Patient Leakage*).
 

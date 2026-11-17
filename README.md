@@ -1,6 +1,5 @@
 # ⚡ DERMASPARK
 ### Platform Evaluasi & Hasil Pengujian Model ConvNeXtTiny-MHSA
-**Program Hibah Penelitian BIMA 2026 — Universitas Trunojoyo Madura**  
 
 **DERMASPARK** (*Dermatology × Apache Spark*) adalah platform web interaktif berbasis Streamlit untuk menyajikan evaluasi mendalam dan ringkasan data uji terisolasi (*n* = 3.291 citra) pada model klasifikasi kanker kulit **ConvNeXtTiny-MHSA**, berstandar **AntiSlop** (fokus saintifik, metrik riil, bebas bias *Zero Patient Leakage*).
 

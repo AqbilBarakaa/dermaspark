@@ -286,7 +286,6 @@ def muat_model():
 # ─── HEADER HALAMAN ───────────────────────────────────────────────────────────
 st.markdown("""
 <div class="app-header">
-    <div class="inst-tag">Universitas Trunojoyo Madura &bull; Hibah Penelitian BIMA Kemendikbudristek</div>
     <h1 class="app-title">DERMASPARK: Sistem Skrining Citra Lesi Kulit</h1>
     <div class="app-desc">
         Aplikasi pendukung keputusan klinis berbasis model <strong>ConvNeXtTiny-MHSA</strong> dengan pra-pemrosesan ROI Otsu dan Shades of Gray.
@@ -461,8 +460,7 @@ if citra_bgr is not None:
 # ─── FOOTER RESMI ─────────────────────────────────────────────────────────────
 st.markdown("""
 <div class="app-footer">
-    <strong>DERMASPARK</strong> &bull; Program Asistensi Hibah Penelitian BIMA Kemendikbudristek 2026<br>
-    Teknik Informatika, Fakultas Teknik, Universitas Trunojoyo Madura<br>
-    <em>Pernyataan: Aplikasi ini merupakan perangkat lunak pendukung keputusan (decision support) untuk kebutuhan akademik riset dan bukan instrumen pengganti diagnosa dokter spesialis patologi/dermatologi.</em>
+    <strong>DERMASPARK</strong> &bull; Sistem Skrining Lesi Kulit Berbasis Deep Learning<br>
+    <em>Pernyataan: Aplikasi ini merupakan perangkat lunak pendukung keputusan (decision support) untuk kebutuhan riset dan bukan instrumen pengganti diagnosa dokter spesialis patologi/dermatologi.</em>
 </div>
 """, unsafe_allow_html=True)

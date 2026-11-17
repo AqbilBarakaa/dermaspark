@@ -33,14 +33,6 @@ st.markdown("""
         padding-bottom: 1.1rem;
         margin-bottom: 1.6rem;
     }
-    .inst-tag {
-        font-size: 0.82rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        color: #2563EB;
-        letter-spacing: 0.04em;
-        margin-bottom: 0.25rem;
-    }
     .app-title {
         font-size: 1.75rem;
         font-weight: 700;
@@ -304,14 +296,14 @@ with col_input:
 
     mode = st.radio(
         "Pilih Metode Masukan:",
-        ["Gunakan Sampel Data Riset", "Unggah Foto Lesi Kulit"],
+        ["Gunakan Contoh Sampel", "Unggah Foto Lesi Kulit"],
         horizontal=True
     )
 
     citra_bgr = None
     keterangan_sampel = ""
 
-    if mode == "Gunakan Sampel Data Riset":
+    if mode == "Gunakan Contoh Sampel":
         pilihan_sampel = {
             "Melanoma (Kanker Ganas Agresif) - ISIC_0000054": "Melanoma_ISIC_0000054.jpg",
             "Basal Cell Carcinoma (Kanker Kulit) - ISIC_0024436": "BCC_ISIC_0024436.jpg",
@@ -319,7 +311,7 @@ with col_input:
             "Melanocytic Nevus (Tahi Lalat Jinak) - ISIC_0000009": "Nevus_ISIC_0000009.jpg",
             "Benign Keratosis (Lesi Jinak) - ISIC_0012173": "BKL_ISIC_0012173.jpg"
         }
-        terpilih = st.selectbox("Pilih Sampel Uji:", list(pilihan_sampel.keys()))
+        terpilih = st.selectbox("Pilih Sampel:", list(pilihan_sampel.keys()))
         berkas = SAMPLES_DIR / pilihan_sampel[terpilih]
         if berkas.exists():
             citra_bgr = cv2.imread(str(berkas))
@@ -337,7 +329,7 @@ with col_input:
 
     with st.expander("Pengaturan Ambang Keputusan"):
         ambang = st.slider("Batas Ambang Keganasan:", 0.0, 1.0, 0.42, 0.01)
-        st.caption("Batas ambang default hasil validasi riset: **0,42** (Sensitivitas 81,10% | Spesifisitas 87,66%).")
+        st.caption("Batas ambang standar: **0,42** (Sensitivitas 81,10% | Spesifisitas 87,66%).")
 
     st.markdown("</div>", unsafe_allow_html=True)
 
@@ -442,7 +434,7 @@ with col_report:
 if citra_bgr is not None:
     st.markdown("""
     <div class="med-card">
-        <div class="med-card-title">🔬 3. Tahapan Pra-pemrosesan Citra (Metodologi Riset)</div>
+        <div class="med-card-title">🔬 3. Tahapan Pra-pemrosesan Citra</div>
     """, unsafe_allow_html=True)
 
     c1, c2, c3, c4 = st.columns(4)
@@ -457,10 +449,9 @@ if citra_bgr is not None:
 
     st.markdown("</div>", unsafe_allow_html=True)
 
-# ─── FOOTER RESMI ─────────────────────────────────────────────────────────────
+# ─── FOOTER ───────────────────────────────────────────────────────────────────
 st.markdown("""
 <div class="app-footer">
-    <strong>DERMASPARK</strong> &bull; Sistem Skrining Lesi Kulit Berbasis Deep Learning<br>
-    <em>Pernyataan: Aplikasi ini merupakan perangkat lunak pendukung keputusan (decision support) untuk kebutuhan riset dan bukan instrumen pengganti diagnosa dokter spesialis patologi/dermatologi.</em>
+    DERMASPARK &bull; Sistem Skrining Citra Lesi Kulit
 </div>
 """, unsafe_allow_html=True)

@@ -18,13 +18,13 @@ from torchvision import models
 
 # ─── KONFIGURASI HALAMAN ──────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="DERMASPARK - Deteksi Lesi Kanker Kulit",
-    page_icon="🔬",
+    page_title="DERMASPARK - Dermatology × Apache Spark",
+    page_icon="⚡",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
 
-# ─── PATH DIREKTORI ───────────────────────────────────────────────────────────
+# ─── PATH DIREKTORI & KONSTANTA RISET ─────────────────────────────────────────
 BASE_DIR = Path(__file__).parent
 DATA_DIR = BASE_DIR / "data"
 MODEL_PATH = BASE_DIR / "model" / "utama_256_swa_half.pth"
@@ -42,453 +42,314 @@ KELAS_NAMA = {
     "SCC": "Squamous Cell Carcinoma",
     "VASC": "Vascular Lesions"
 }
-KELAS_DESKRIPSI = {
-    "AKIEC": "Lesi bercak pra-kanker pada lapisan epidermis yang berpotensi berkembang menjadi karsinoma.",
-    "BCC": "Kanker kulit non-melanoma paling umum, bertumbuh lambat namun invasif secara lokal.",
-    "BKL": "Lesi seboroik jinak non-kanker yang sering muncul seiring penuaan kulit.",
-    "DF": "Nodul jinak jaringan fibrosa kulit yang umumnya tidak berbahaya.",
-    "MEL": "Kanker kulit ganas paling agresif yang berkembang dari melanosit. Memerlukan penanganan segera.",
-    "NV": "Proliferasi melanosit jinak umum (tahi lalat). Mayoritas stabil dan tidak ganas.",
-    "SCC": "Kanker kulit ganas sel skuamosa dengan risiko metastatik lebih tinggi dibanding BCC.",
-    "VASC": "Kelainan vaskular jinak pada pembuluh darah kulit (angioma/hemangioma)."
+KELAS_TIPE = {
+    "AKIEC": "Malignant",
+    "BCC": "Malignant",
+    "BKL": "Benign",
+    "DF": "Benign",
+    "MEL": "Malignant",
+    "NV": "Benign",
+    "SCC": "Malignant",
+    "VASC": "Benign"
 }
-MALIGNANT_IDX = [0, 1, 4, 6]  # AKIEC, BCC, MEL, SCC
-BENIGN_IDX = [2, 3, 5, 7]     # BKL, DF, NV, VASC
+KELAS_KETERANGAN = {
+    "AKIEC": "Lesi pra-kanker epidermal akibat radiasi UV kronis.",
+    "BCC": "Kanker sel basal, keganasan lokal paling sering ditemui.",
+    "BKL": "Lesi keratosis seboroik jinak, non-malignant.",
+    "DF": "Proliferasi jinak jaringan ikat/fibroblas kutan.",
+    "MEL": "Keganasan melanosit invasif dengan risiko metastasis tinggi.",
+    "NV": "Proliferasi jinak sel melanositik (tahi lalat tipikal).",
+    "SCC": "Karsinoma sel skuamosa, memiliki potensi penyebaran nodus limfa.",
+    "VASC": "Malformasi vaskular jinak atau hemangioma kutis."
+}
+MALIGNANT_IDX = [0, 1, 4, 6]
+BENIGN_IDX = [2, 3, 5, 7]
 NORM_MEAN = [0.485, 0.456, 0.406]
 NORM_STD = [0.229, 0.224, 0.225]
 
-# ─── TEMA VISUAL CYBER-MEDICAL GLASSMORPHISM (DERMATOAI STYLE) ────────────────
+# ─── TEMA DESAIN KHUSUS DERMASPARK (DEEP NAVY & SPARK GOLD) ───────────────────
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
     html, body, [class*="css"] {
-        font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
-        color: #f1f5f9;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        color: #e2e8f0;
     }
 
     .stApp {
-        background-color: #070b14;
+        background-color: #080d1a;
         background-image: 
-            radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.10) 0%, transparent 65%),
-            linear-gradient(rgba(56, 189, 248, 0.025) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(56, 189, 248, 0.025) 1px, transparent 1px);
-        background-size: 100% 100%, 32px 32px, 32px 32px;
+            radial-gradient(circle at 15% 10%, rgba(245, 158, 11, 0.08) 0%, transparent 40%),
+            radial-gradient(circle at 85% 15%, rgba(56, 189, 248, 0.09) 0%, transparent 45%),
+            linear-gradient(rgba(30, 41, 59, 0.25) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(30, 41, 59, 0.25) 1px, transparent 1px);
+        background-size: 100% 100%, 100% 100%, 28px 28px, 28px 28px;
     }
 
-    /* Topbar Header */
-    .topbar-wrap {
+    /* Header Navigasi Khusus */
+    .hero-banner {
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(17, 24, 39, 0.9) 100%);
+        border: 1px solid rgba(245, 158, 11, 0.22);
+        border-radius: 16px;
+        padding: 1.1rem 1.6rem;
+        margin-bottom: 1.6rem;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        background: rgba(13, 20, 36, 0.75);
-        backdrop-filter: blur(16px);
-        border: 1px solid rgba(56, 189, 248, 0.16);
-        border-radius: 16px;
-        padding: 0.85rem 1.4rem;
-        margin-bottom: 1.6rem;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
     }
-    .topbar-left {
+    .hero-left {
         display: flex;
         align-items: center;
-        gap: 0.9rem;
+        gap: 1.1rem;
     }
-    .topbar-logo {
-        width: 44px;
-        height: 44px;
-        background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #6366f1 100%);
-        border-radius: 12px;
+    .hero-spark-badge {
+        width: 48px;
+        height: 48px;
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #b45309 100%);
+        border-radius: 14px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.4rem;
-        box-shadow: 0 0 16px rgba(56, 189, 248, 0.4);
+        font-size: 1.6rem;
+        box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
     }
-    .topbar-title {
+    .hero-brand {
         font-family: 'Space Grotesk', sans-serif;
-        font-size: 1.35rem;
+        font-size: 1.5rem;
         font-weight: 800;
-        color: #f8fafc;
         letter-spacing: -0.02em;
-        line-height: 1.1;
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
     }
-    .topbar-sub {
-        font-size: 0.82rem;
+    .hero-sub {
+        font-size: 0.84rem;
         color: #94a3b8;
         margin-top: 0.15rem;
     }
-    .topbar-right {
+    .hero-chips {
         display: flex;
         align-items: center;
-        gap: 0.55rem;
+        gap: 0.5rem;
         flex-wrap: wrap;
     }
-    .chip {
+    .hero-chip {
         font-family: 'JetBrains Mono', monospace;
         font-size: 0.74rem;
         font-weight: 600;
-        padding: 0.28rem 0.75rem;
-        border-radius: 9999px;
-        border: 1px solid rgba(56, 189, 248, 0.25);
-        background: rgba(56, 189, 248, 0.08);
-        color: #38bdf8;
-    }
-    .chip-green {
-        border-color: rgba(16, 185, 129, 0.3);
-        background: rgba(16, 185, 129, 0.08);
-        color: #34d399;
-    }
-
-    /* Section Labels */
-    .sec-label {
-        font-family: 'Space Grotesk', sans-serif;
-        font-size: 0.85rem;
-        font-weight: 700;
-        color: #38bdf8;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        margin-bottom: 0.75rem;
-        display: flex;
-        align-items: center;
-        gap: 0.45rem;
-    }
-    .sec-num {
-        font-family: 'JetBrains Mono', monospace;
-        background: rgba(56, 189, 248, 0.15);
-        border: 1px solid rgba(56, 189, 248, 0.35);
-        border-radius: 6px;
-        padding: 0.1rem 0.4rem;
-        font-size: 0.75rem;
-    }
-
-    /* Viewfinder / Scanner Frame */
-    .scan-wrap {
-        position: relative;
-        background: rgba(13, 20, 36, 0.65);
-        border: 1px solid rgba(56, 189, 248, 0.18);
-        border-radius: 14px;
-        padding: 1.1rem;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
-        margin-bottom: 1.2rem;
-    }
-    .scan-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 0.8rem;
-    }
-    .scan-status {
-        display: flex;
-        align-items: center;
-        gap: 0.4rem;
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 0.76rem;
-        color: #38bdf8;
-        font-weight: 600;
-    }
-    .scan-dim {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 0.72rem;
-        background: rgba(255, 255, 255, 0.05);
-        padding: 0.15rem 0.5rem;
-        border-radius: 4px;
-        color: #94a3b8;
-    }
-    .scan-frame {
-        position: relative;
-        width: 100%;
-        border-radius: 10px;
-        overflow: hidden;
-        border: 1px solid rgba(56, 189, 248, 0.25);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: #020617;
-    }
-    .scan-frame img {
-        width: 100%;
-        height: auto;
-        display: block;
+        padding: 0.3rem 0.75rem;
         border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(15, 23, 42, 0.7);
+        color: #cbd5e1;
     }
-    /* Corner Brackets */
-    .scan-corner {
-        position: absolute;
-        width: 16px;
-        height: 16px;
-        border: 2px solid #38bdf8;
-        pointer-events: none;
-        z-index: 2;
+    .chip-spark {
+        border-color: rgba(245, 158, 11, 0.35);
+        color: #fbbf24;
+        background: rgba(245, 158, 11, 0.10);
     }
-    .scan-corner.tl { top: 6px; left: 6px; border-right: none; border-bottom: none; }
-    .scan-corner.tr { top: 6px; right: 6px; border-left: none; border-bottom: none; }
-    .scan-corner.bl { bottom: 6px; left: 6px; border-right: none; border-top: none; }
-    .scan-corner.br { bottom: 6px; right: 6px; border-left: none; border-top: none; }
+    .chip-ai {
+        border-color: rgba(56, 189, 248, 0.35);
+        color: #38bdf8;
+        background: rgba(56, 189, 248, 0.10);
+    }
 
-    /* Hero Diagnosis Card */
-    .res-card {
-        background: rgba(13, 20, 36, 0.78);
-        backdrop-filter: blur(16px);
-        border: 1px solid rgba(56, 189, 248, 0.20);
-        border-radius: 16px;
-        padding: 1.35rem;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    /* Container Kartu Kaca */
+    .card-shell {
+        background: rgba(15, 23, 42, 0.72);
+        backdrop-filter: blur(14px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 14px;
+        padding: 1.25rem;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
         margin-bottom: 1.2rem;
     }
-    .res-top {
-        display: flex;
-        align-items: center;
-        gap: 1.2rem;
-    }
-    .gauge-wrap {
-        width: 90px;
-        height: 90px;
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-    }
-    .gauge-svg {
-        transform: rotate(-90deg);
-        width: 90px;
-        height: 90px;
-    }
-    .gauge-val {
-        position: absolute;
-        text-align: center;
-    }
-    .gauge-num {
+    .card-title {
         font-family: 'Space Grotesk', sans-serif;
-        font-size: 1.15rem;
-        font-weight: 800;
-        color: #f8fafc;
-        line-height: 1;
-    }
-    .gauge-lbl {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 0.58rem;
-        color: #94a3b8;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        margin-top: 2px;
-    }
-    .res-details {
-        flex-grow: 1;
-    }
-    .res-overline {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 0.72rem;
-        color: #64748b;
+        font-size: 0.88rem;
+        font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.06em;
-    }
-    .res-name {
-        font-family: 'Space Grotesk', sans-serif;
-        font-size: 1.55rem;
-        font-weight: 800;
-        color: #f8fafc;
-        line-height: 1.15;
-        margin: 0.15rem 0 0.35rem 0;
-    }
-    .res-badge {
-        display: inline-block;
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 0.74rem;
-        font-weight: 700;
-        padding: 0.22rem 0.65rem;
-        border-radius: 9999px;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-    }
-    .res-badge.malignant {
-        background: rgba(239, 68, 68, 0.18);
-        border: 1px solid #ef4444;
-        color: #f87171;
-    }
-    .res-badge.benign {
-        background: rgba(16, 185, 129, 0.18);
-        border: 1px solid #10b981;
-        color: #34d399;
-    }
-    .res-desc {
-        font-size: 0.83rem;
         color: #94a3b8;
-        line-height: 1.45;
-        margin-top: 0.55rem;
-        padding-top: 0.55rem;
-        border-top: 1px solid rgba(255, 255, 255, 0.07);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.9rem;
+    }
+    .card-title-highlight {
+        color: #f59e0b;
     }
 
-    /* Risk Spectrum Bar */
-    .risk-wrap {
-        background: rgba(13, 20, 36, 0.60);
-        border: 1px solid rgba(56, 189, 248, 0.14);
-        border-radius: 12px;
-        padding: 0.95rem 1.1rem;
-        margin-bottom: 1.2rem;
+    /* Previewer & Viewport */
+    .viewport-box {
+        position: relative;
+        background: #020617;
+        border: 1px solid rgba(245, 158, 11, 0.25);
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 0.8rem;
     }
-    .risk-header {
+    .viewport-box img {
+        width: 100%;
+        display: block;
+        border-radius: 9px;
+    }
+    .viewport-hud {
+        position: absolute;
+        bottom: 8px;
+        left: 8px;
+        right: 8px;
         display: flex;
         justify-content: space-between;
-        align-items: center;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.70rem;
+        background: rgba(2, 6, 23, 0.75);
+        backdrop-filter: blur(8px);
+        padding: 0.25rem 0.6rem;
+        border-radius: 6px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        color: #cbd5e1;
+    }
+
+    /* Vonis Diagnostik */
+    .verdict-box {
+        border-radius: 12px;
+        padding: 1.2rem 1.4rem;
+        margin-bottom: 1.1rem;
+        text-align: left;
+    }
+    .verdict-malignant {
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.16) 0%, rgba(153, 27, 27, 0.22) 100%);
+        border: 1px solid #ef4444;
+    }
+    .verdict-benign {
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.14) 0%, rgba(6, 95, 70, 0.20) 100%);
+        border: 1px solid #10b981;
+    }
+    .verdict-tag {
         font-family: 'JetBrains Mono', monospace;
         font-size: 0.75rem;
-        margin-bottom: 0.55rem;
-    }
-    .risk-title {
-        color: #94a3b8;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-    }
-    .risk-score {
         font-weight: 700;
-        color: #f8fafc;
-    }
-    .risk-bar-bg {
-        position: relative;
-        height: 10px;
-        border-radius: 9999px;
-        background: linear-gradient(90deg, #10b981 0%, #eab308 50%, #ef4444 100%);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
         margin-bottom: 0.35rem;
     }
-    .risk-cursor {
-        position: absolute;
-        top: -4px;
-        width: 4px;
-        height: 18px;
-        background: #ffffff;
-        border-radius: 2px;
-        box-shadow: 0 0 8px #ffffff;
-        transform: translateX(-50%);
-        transition: left 0.4s ease;
+    .verdict-tag.mal { color: #f87171; }
+    .verdict-tag.ben { color: #34d399; }
+    .verdict-main {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: #ffffff;
+        line-height: 1.2;
     }
-    .risk-labels {
-        display: flex;
-        justify-content: space-between;
-        font-size: 0.70rem;
-        color: #64748b;
-        font-family: 'JetBrains Mono', monospace;
+    .verdict-sub {
+        font-size: 0.85rem;
+        color: #cbd5e1;
+        margin-top: 0.45rem;
+        line-height: 1.45;
     }
 
-    /* Probability Rows */
-    .prow {
-        margin-bottom: 0.55rem;
+    /* Gauge / Skor Probabilitas */
+    .metric-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+        margin-bottom: 1.1rem;
     }
-    .prow-meta {
+    .metric-cell {
+        background: rgba(2, 6, 23, 0.55);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+    }
+    .metric-cell-lbl {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.70rem;
+        color: #64748b;
+        text-transform: uppercase;
+    }
+    .metric-cell-val {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: #f8fafc;
+        margin-top: 0.15rem;
+    }
+
+    /* Bar Distribusi Kategori */
+    .cat-bar-wrap {
+        margin-bottom: 0.6rem;
+    }
+    .cat-bar-meta {
         display: flex;
         justify-content: space-between;
         font-size: 0.78rem;
-        margin-bottom: 0.2rem;
-    }
-    .prow-name {
         font-weight: 600;
-        color: #cbd5e1;
+        margin-bottom: 0.25rem;
     }
-    .prow-val {
-        font-family: 'JetBrains Mono', monospace;
-        font-weight: 600;
-        color: #94a3b8;
-    }
-    .prow-bar-bg {
-        height: 6px;
+    .cat-track {
+        height: 7px;
+        background: rgba(255, 255, 255, 0.07);
         border-radius: 9999px;
-        background: rgba(255, 255, 255, 0.08);
         overflow: hidden;
     }
-    .prow-bar-fill {
+    .cat-fill {
         height: 100%;
         border-radius: 9999px;
     }
 
-    /* Telemetry Stats Grid */
-    .stats-grid {
+    /* Pipeline Multi-Tahap */
+    .pipe-container {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
-        gap: 0.55rem;
-        margin-top: 1.1rem;
+        gap: 0.7rem;
+        margin-top: 0.5rem;
     }
-    .stat-card {
-        background: rgba(13, 20, 36, 0.55);
-        border: 1px solid rgba(56, 189, 248, 0.12);
-        border-radius: 8px;
-        padding: 0.55rem;
-        text-align: center;
-    }
-    .stat-lbl {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 0.62rem;
-        color: #64748b;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-    }
-    .stat-val {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 0.85rem;
-        font-weight: 700;
-        color: #38bdf8;
-        margin-top: 0.15rem;
-    }
-
-    /* Pipeline Stages Flow */
-    .pipe-wrap {
-        background: rgba(13, 20, 36, 0.65);
-        border: 1px solid rgba(56, 189, 248, 0.15);
-        border-radius: 14px;
-        padding: 1.1rem;
-        margin-top: 1.6rem;
-    }
-    .pipe-flow {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 0.45rem;
-        overflow-x: auto;
-    }
-    .pipe-node {
-        flex: 1;
-        min-width: 130px;
-        background: rgba(2, 6, 23, 0.7);
-        border: 1px solid rgba(56, 189, 248, 0.18);
+    .pipe-step-card {
+        background: rgba(2, 6, 23, 0.65);
+        border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 10px;
-        padding: 0.55rem;
+        padding: 0.6rem;
         text-align: center;
     }
-    .pipe-node img {
+    .pipe-step-card img {
         width: 100%;
-        height: 100px;
+        height: 95px;
         object-fit: cover;
         border-radius: 6px;
         display: block;
         margin-bottom: 0.4rem;
     }
-    .pipe-lbl {
+    .pipe-step-title {
         font-family: 'JetBrains Mono', monospace;
-        font-size: 0.68rem;
+        font-size: 0.70rem;
         font-weight: 600;
-        color: #94a3b8;
+        color: #cbd5e1;
     }
-    .parr {
-        font-size: 1.3rem;
-        color: #38bdf8;
-        opacity: 0.6;
-        user-select: none;
+    .pipe-step-desc {
+        font-size: 0.65rem;
+        color: #64748b;
+        margin-top: 0.15rem;
     }
 
-    /* Footer Note */
-    .footer-note {
-        text-align: center;
-        font-size: 0.76rem;
-        color: #64748b;
+    /* Footer */
+    .footer-bar {
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        padding-top: 1.2rem;
         margin-top: 2rem;
-        margin-bottom: 1.2rem;
-        font-family: 'JetBrains Mono', monospace;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        font-size: 0.78rem;
+        color: #64748b;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# ─── ARSITEKTUR MODEL ─────────────────────────────────────────────────────────
+# ─── ARSITEKTUR JARINGAN CONVNEXTTINY-MHSA ────────────────────────────────────
 class GlobalMHSA(nn.Module):
     def __init__(self, dim=768, heads=8, mlp_ratio=2.0, drop=0.1):
         super().__init__()
@@ -531,11 +392,10 @@ class ConvNeXtTinyMHSA(nn.Module):
         tok = self.attention(tok)
         return self.classifier(self.norm(tok.mean(1) + f.mean(dim=(2, 3))))
 
-# ─── FUNGSI PRA-PEMROSESAN CITRA ──────────────────────────────────────────────
+# ─── ALUR PRAPEMROSESAN SAINTIFIK ─────────────────────────────────────────────
 DET, MARGIN, FRAC_MIN, FRAC_MAX = 512, 0.15, 0.03, 0.90
 
-def praproses_tahap(im_bgr):
-    """Menghasilkan tahap-tahap citra untuk alur visualisasi pipeline."""
+def eksekusi_praproses(im_bgr):
     h, w = im_bgr.shape[:2]
     det = cv2.resize(im_bgr, (DET, DET), interpolation=cv2.INTER_AREA)
     abu = cv2.GaussianBlur(cv2.cvtColor(det, cv2.COLOR_BGR2GRAY), (7, 7), 0)
@@ -546,6 +406,7 @@ def praproses_tahap(im_bgr):
     cnts, _ = cv2.findContours(masker, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     
     crop = im_bgr
+    box_coords = None
     if cnts:
         c = max(cnts, key=cv2.contourArea)
         frac = cv2.contourArea(c) / (DET * DET)
@@ -559,11 +420,12 @@ def praproses_tahap(im_bgr):
             crop_cand = im_bgr[int(y0 * sy):int(y1 * sy), int(x0 * sx):int(x1 * sx)]
             if crop_cand.size > 0:
                 crop = crop_cand
+                box_coords = (x0, y0, x1, y1)
 
-    im_crop_256 = cv2.resize(crop, (IMAGE_SIZE, IMAGE_SIZE), interpolation=cv2.INTER_AREA)
+    im_crop = cv2.resize(crop, (IMAGE_SIZE, IMAGE_SIZE), interpolation=cv2.INTER_AREA)
     
     # Shades of gray (p=6)
-    x_raw = torch.from_numpy(cv2.cvtColor(im_crop_256, cv2.COLOR_BGR2RGB)).permute(2, 0, 1).float().unsqueeze(0) / 255.0
+    x_raw = torch.from_numpy(cv2.cvtColor(im_crop, cv2.COLOR_BGR2RGB)).permute(2, 0, 1).float().unsqueeze(0) / 255.0
     e = x_raw.clamp_min(1e-6).pow(6).mean(dim=(2, 3), keepdim=True).pow(1.0 / 6)
     e = e / e.norm(dim=1, keepdim=True)
     x_sog = (x_raw / (e * math.sqrt(3))).clamp(0, 1)
@@ -572,286 +434,250 @@ def praproses_tahap(im_bgr):
 
     return {
         "asli": cv2.resize(im_bgr, (IMAGE_SIZE, IMAGE_SIZE)),
-        "abu": cv2.cvtColor(cv2.resize(abu, (IMAGE_SIZE, IMAGE_SIZE)), cv2.COLOR_GRAY2BGR),
         "masker": cv2.cvtColor(cv2.resize(masker, (IMAGE_SIZE, IMAGE_SIZE)), cv2.COLOR_GRAY2BGR),
-        "roi": im_crop_256,
+        "roi": im_crop,
         "sog": im_sog_bgr,
-        "x_sog_tensor": x_sog
+        "tensor_sog": x_sog,
+        "ada_roi": box_coords is not None
     }
 
-def ke_base64(im_bgr):
-    _, buf = cv2.imencode(".jpg", im_bgr, [cv2.IMWRITE_JPEG_QUALITY, 92])
-    return base64.b64encode(buf).decode("utf-8")
+def enc_b64(im_bgr):
+    _, b = cv2.imencode(".jpg", im_bgr, [cv2.IMWRITE_JPEG_QUALITY, 90])
+    return base64.b64encode(b).decode("utf-8")
 
-# ─── PEMUATAN MODEL & BOBOT SWA ───────────────────────────────────────────────
+# ─── MODEL LOADER ─────────────────────────────────────────────────────────────
 @st.cache_resource
-def muat_model():
+def ambil_model():
     if not MODEL_PATH.exists():
-        st.error(f"Bobot model tidak ditemukan di: {MODEL_PATH}")
+        st.error("Model ConvNeXtTiny SWA belum siap.")
         return None
-    model = ConvNeXtTinyMHSA(n_kelas=8)
-    sd_half = torch.load(MODEL_PATH, map_location="cpu")
-    sd_float = {k: v.float() if v.is_floating_point() else v for k, v in sd_half.items()}
-    model.load_state_dict(sd_float)
-    model.eval()
-    return model
+    net = ConvNeXtTinyMHSA(n_kelas=8)
+    sd = torch.load(MODEL_PATH, map_location="cpu")
+    sd_f32 = {k: v.float() if v.is_floating_point() else v for k, v in sd.items()}
+    net.load_state_dict(sd_f32)
+    net.eval()
+    return net
 
-# ─── TOPBAR HEADER ────────────────────────────────────────────────────────────
+# ─── HERO HEADER BANNER ───────────────────────────────────────────────────────
 st.markdown("""
-<div class="topbar-wrap">
-    <div class="topbar-left">
-        <div class="topbar-logo">🔬</div>
+<div class="hero-banner">
+    <div class="hero-left">
+        <div class="hero-spark-badge">⚡</div>
         <div>
-            <div class="topbar-title">DERMASPARK</div>
-            <div class="topbar-sub">Deteksi Kanker Kulit Medis &bull; BIMA 2026 UTM</div>
+            <div class="hero-brand">
+                DERMASPARK
+                <span style="font-size:0.72rem; font-weight:600; padding:0.2rem 0.5rem; background:rgba(245,158,11,0.2); border:1px solid #f59e0b; border-radius:6px; color:#fbbf24;">PROTOTIPE V1.0</span>
+            </div>
+            <div class="hero-sub">Platform Skrining Lesi Kanker Kulit Medis &bull; Asistensi Hibah BIMA UTM 2026</div>
         </div>
     </div>
-    <div class="topbar-right">
-        <span class="chip">ConvNeXtTiny-MHSA (85,26%)</span>
-        <span class="chip chip-green">● ROI Otsu + SoG (p=6)</span>
-        <span class="chip">Ambang 0,42</span>
+    <div class="hero-chips">
+        <span class="hero-chip chip-spark">Spark Partition: 4-Core Optimal</span>
+        <span class="hero-chip chip-ai">ConvNeXtTiny-MHSA (85,26%)</span>
+        <span class="hero-chip">Ambang Klinis: 0,42</span>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
-# ─── DUAL-COLUMN LAYOUT (4.5 : 5.5) ───────────────────────────────────────────
-col_input, col_output = st.columns([4.5, 5.5], gap="large")
+# ─── WORKSPACE DUA KOLOM ──────────────────────────────────────────────────────
+col_input, col_result = st.columns([1, 1.25], gap="large")
 
 with col_input:
-    st.markdown('<div class="sec-label"><span class="sec-num">01</span> INPUT CITRA DERMOSKOPI</div>', unsafe_allow_html=True)
+    st.markdown("""
+    <div class="card-shell">
+        <div class="card-title"><span class="card-title-highlight">01.</span> MASUKAN CITRA DERMATOSKOPI</div>
+    """, unsafe_allow_html=True)
 
-    tab_demo, tab_upload = st.tabs(["Sampel Demo Riset", "Unggah Sendiri"])
+    mode_masukan = st.radio(
+        "Sumber Data:",
+        ["Sampel Kurasi Validasi Riset", "Unggah Citra Dermoskopi Bebas"],
+        horizontal=True,
+        label_visibility="collapsed"
+    )
 
-    citra_bgr = None
-    info_sampel = ""
+    citra_input_bgr = None
+    judul_citra = ""
 
-    with tab_demo:
-        daftar_demo = {
-            "🔴 Melanoma (Ganas Agresif)": "Melanoma_ISIC_0000054.jpg",
-            "🔴 Basal Cell Carcinoma (Kanker)": "BCC_ISIC_0024436.jpg",
-            "🔴 Actinic Keratoses (Pra-Kanker)": "AKIEC_ISIC_0024329.jpg",
-            "🟢 Melanocytic Nevi (Tahi Lalat Jinak)": "Nevus_ISIC_0000009.jpg",
-            "🟢 Benign Keratosis (Lesi Jinak)": "BKL_ISIC_0012173.jpg"
+    if mode_masukan == "Sampel Kurasi Validasi Riset":
+        koleksi = {
+            "🔴 Melanoma (Kanker Ganas Agresif) - ISIC_0000054": ("Melanoma_ISIC_0000054.jpg", "Malignant"),
+            "🔴 Basal Cell Carcinoma (Kanker Kulit) - ISIC_0024436": ("BCC_ISIC_0024436.jpg", "Malignant"),
+            "🔴 Actinic Keratoses (Pra-Kanker) - ISIC_0024329": ("AKIEC_ISIC_0024329.jpg", "Malignant"),
+            "🟢 Melanocytic Nevi (Tahi Lalat Jinak) - ISIC_0000009": ("Nevus_ISIC_0000009.jpg", "Benign"),
+            "🟢 Benign Keratosis (Lesi Jinak) - ISIC_0012173": ("BKL_ISIC_0012173.jpg", "Benign")
         }
-        pilihan = st.selectbox("Pilih Sampel Kurasi Riset:", list(daftar_demo.keys()), label_visibility="collapsed")
-        file_path = SAMPLES_DIR / daftar_demo[pilihan]
-        if file_path.exists():
-            citra_bgr = cv2.imread(str(file_path))
-            info_sampel = pilihan
+        pilih_item = st.selectbox("Pilih Sampel Riil:", list(koleksi.keys()))
+        berkas, sifat = koleksi[pilih_item]
+        target_f = SAMPLES_DIR / berkas
+        if target_f.exists():
+            citra_input_bgr = cv2.imread(str(target_f))
+            judul_citra = pilih_item
+    else:
+        up = st.file_uploader("Unggah foto lesi kulit (JPG / PNG):", type=["jpg", "jpeg", "png"])
+        if up is not None:
+            buf = np.asarray(bytearray(up.read()), dtype=np.uint8)
+            citra_input_bgr = cv2.imdecode(buf, cv2.IMREAD_COLOR)
+            judul_citra = f"Citra Unggahan: {up.name}"
 
-    with tab_upload:
-        up_file = st.file_uploader("Pilih berkas foto dermoskopi (JPG / PNG):", type=["jpg", "jpeg", "png"], label_visibility="collapsed")
-        if up_file is not None:
-            bytes_data = np.asarray(bytearray(up_file.read()), dtype=np.uint8)
-            citra_bgr = cv2.imdecode(bytes_data, cv2.IMREAD_COLOR)
-            info_sampel = f"Unggahan: {up_file.name}"
-
-    with st.expander("⚙️ Pengaturan Model & Prapemrosesan"):
-        ambang = st.slider("Batas Ambang Keganasan (Threshold):", 0.0, 1.0, 0.42, 0.01, help="Ambang optimal riset: 0,42")
-        opsi_tta = st.checkbox("Aktifkan TTA 4-Arah (Rotasi & Flip)", value=False)
-        margin_pct = st.slider("Margin Kulit Sehat (%):", 0, 30, 15, 1)
-
-    if citra_bgr is not None:
+    if citra_input_bgr is not None:
         t0_prep = time.time()
-        tahapan = praproses_tahap(citra_bgr)
-        waktu_prep = (time.time() - t0_prep) * 1000
+        tahap_data = eksekusi_praproses(citra_input_bgr)
+        durasi_prep_ms = (time.time() - t0_prep) * 1000
 
-        b64_asli = ke_base64(tahapan["asli"])
+        b64_asli = enc_b64(tahap_data["asli"])
         st.markdown(f"""
-        <div class="scan-wrap">
-            <div class="scan-header">
-                <div class="scan-status"><span style="color:#10b981;">●</span> CITRA TERPILIH</div>
-                <div class="scan-dim">256×256px</div>
-            </div>
-            <div class="scan-frame">
-                <div class="scan-corner tl"></div>
-                <div class="scan-corner tr"></div>
-                <div class="scan-corner bl"></div>
-                <div class="scan-corner br"></div>
-                <img src="data:image/jpeg;base64,{b64_asli}" alt="Preview" />
+        <div class="viewport-box">
+            <img src="data:image/jpeg;base64,{b64_asli}" alt="Preview" />
+            <div class="viewport-hud">
+                <span>STATUS: CITRA TERSIAPKAN</span>
+                <span>DIMENSI: 256×256 PX</span>
             </div>
         </div>
         """, unsafe_allow_html=True)
 
-with col_output:
-    st.markdown('<div class="sec-label"><span class="sec-num">02</span> HASIL DIAGNOSIS MODEL</div>', unsafe_allow_html=True)
+    with st.expander("⚙️ Parameter Ambang & Toleransi Klinis"):
+        ambang_slider = st.slider("Batas Ambang Keganasan ($P_{ganas}$):", 0.0, 1.0, 0.42, 0.01)
+        st.caption("Ambang optimal riset: **0,42** (Sensitivitas 81,10% | Spesifisitas 87,66%).")
 
-    if citra_bgr is not None:
-        model = muat_model()
+    st.markdown("</div>", unsafe_allow_html=True)
+
+with col_result:
+    st.markdown("""
+    <div class="card-shell">
+        <div class="card-title"><span class="card-title-highlight">02.</span> HASIL SKRINING & INFERENSI DIAGNOSTIK</div>
+    """, unsafe_allow_html=True)
+
+    if citra_input_bgr is not None:
+        model = ambil_model()
         if model is not None:
             # Normalisasi ImageNet
             mean_t = torch.tensor(NORM_MEAN).view(1, 3, 1, 1)
             std_t = torch.tensor(NORM_STD).view(1, 3, 1, 1)
-            x_norm = (tahapan["x_sog_tensor"] - mean_t) / std_t
+            x_in = (tahap_data["tensor_sog"] - mean_t) / std_t
 
             t0_inf = time.time()
             with torch.no_grad():
-                if opsi_tta:
-                    vs = [x_norm, x_norm.flip(3), x_norm.flip(2), torch.rot90(x_norm, 1, [2, 3])]
-                    logits = torch.stack([model(v) for v in vs]).mean(dim=0)
-                else:
-                    logits = model(x_norm)
-                probs = F.softmax(logits, dim=1)[0].numpy()
-            waktu_inf = (time.time() - t0_inf) * 1000
+                lg = model(x_in)
+                probs = F.softmax(lg, dim=1)[0].numpy()
+            durasi_inf_ms = (time.time() - t0_inf) * 1000
 
-            # Hitung Kelas Teratas & Keganasan
             top_idx = int(np.argmax(probs))
             top_kelas = KELAS[top_idx]
             top_nama = KELAS_NAMA[top_kelas]
             top_prob = float(probs[top_idx])
 
-            p_ganas = float(sum(probs[i] for i in MALIGNANT_IDX))
-            is_ganas = p_ganas >= ambang
+            prob_ganas = float(sum(probs[i] for i in MALIGNANT_IDX))
+            prob_jinak = float(sum(probs[i] for i in BENIGN_IDX))
+            status_ganas = prob_ganas >= ambang_slider
 
-            # Circular Gauge Math (Radius 36, Perimeter = 2*pi*36 ~ 226)
-            circ = 2 * math.pi * 36
-            dashoffset = circ * (1.0 - top_prob)
-            gauge_color = "#ef4444" if top_idx in MALIGNANT_IDX else "#10b981"
-
-            badge_html = (
-                '<span class="res-badge malignant">Ganas &bull; Malignant</span>'
-                if is_ganas else
-                '<span class="res-badge benign">Jinak &bull; Benign</span>'
-            )
-
-            # Hero Card
-            st.markdown(f"""
-            <div class="res-card">
-                <div class="res-top">
-                    <div class="gauge-wrap">
-                        <svg class="gauge-svg" viewBox="0 0 90 90">
-                            <circle cx="45" cy="45" r="36" fill="transparent" stroke="rgba(255,255,255,0.08)" stroke-width="7" />
-                            <circle cx="45" cy="45" r="36" fill="transparent" stroke="{gauge_color}" stroke-width="7"
-                                    stroke-dasharray="{circ:.1f}" stroke-dashoffset="{dashoffset:.1f}" stroke-linecap="round" />
-                        </svg>
-                        <div class="gauge-val">
-                            <div class="gauge-num">{top_prob*100:.1f}%</div>
-                            <div class="gauge-lbl">Keyakinan</div>
-                        </div>
-                    </div>
-                    <div class="res-details">
-                        <div class="res-overline">DIAGNOSIS TERDETEKSI</div>
-                        <div class="res-name">{top_nama}</div>
-                        {badge_html}
-                    </div>
-                </div>
-                <div class="res-desc">
-                    {KELAS_DESKRIPSI[top_kelas]}
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-
-            # Risk Spectrum Bar
-            p_ganas_pct = min(100.0, max(0.0, p_ganas * 100))
-            st.markdown(f"""
-            <div class="risk-wrap">
-                <div class="risk-header">
-                    <span class="risk-title">SPEKTRUM PROBABILITAS KEGANASAN</span>
-                    <span class="risk-score">{p_ganas*100:.1f}%</span>
-                </div>
-                <div class="risk-bar-bg">
-                    <div class="risk-cursor" style="left: {p_ganas_pct}%;"></div>
-                </div>
-                <div class="risk-labels">
-                    <span>Rendah (Jinak)</span>
-                    <span style="color:#f59e0b;">Batas ({ambang*100:.0f}%)</span>
-                    <span>Tinggi (Ganas)</span>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-
-            # Probability Breakdown Bars
-            st.markdown('<div style="font-family:\'Space Grotesk\',sans-serif; font-size:0.82rem; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.6rem;">DISTRIBUSI KELAS LESI</div>', unsafe_allow_html=True)
-
-            # Urutkan berdasarkan probabilitas
-            urutan_kelas = np.argsort(probs)[::-1]
-            for idx in urutan_kelas[:4]:  # Tampilkan 4 probabilitas teratas
-                k = KELAS[idx]
-                p = probs[idx]
-                nama_singkat = KELAS_NAMA[k]
-                bar_gradient = (
-                    "linear-gradient(90deg, #f97316, #ef4444)" if idx in MALIGNANT_IDX else
-                    "linear-gradient(90deg, #06b6d4, #10b981)"
-                )
+            # Vonis Panel
+            if status_ganas:
                 st.markdown(f"""
-                <div class="prow">
-                    <div class="prow-meta">
-                        <span class="prow-name">{nama_singkat}</span>
-                        <span class="prow-val">{p*100:.1f}%</span>
+                <div class="verdict-box verdict-malignant">
+                    <div class="verdict-tag mal">⚠️ INDIKASI KEGANASAN (MALIGNANT)</div>
+                    <div class="verdict-main">{top_nama}</div>
+                    <div class="verdict-sub">
+                        Peluang Keganasan Kumulatif: <strong>{prob_ganas*100:.1f}%</strong> (Ambang Batas: {ambang_slider:.2f}).<br>
+                        <em>Rekomendasi:</em> Lesi menunjukkan karakteristik atipikal. Diperlukan konfirmasi biopsi histopatologi serta konsultasi dokter spesialis dermatologi.
                     </div>
-                    <div class="prow-bar-bg">
-                        <div class="prow-bar-fill" style="width: {p*100}%; background: {bar_gradient};"></div>
+                </div>
+                """, unsafe_allow_html=True)
+            else:
+                st.markdown(f"""
+                <div class="verdict-box verdict-benign">
+                    <div class="verdict-tag ben">🛡️ INDIKASI JINAK (BENIGN)</div>
+                    <div class="verdict-main">{top_nama}</div>
+                    <div class="verdict-sub">
+                        Peluang Keganasan Kumulatif: <strong>{prob_ganas*100:.1f}%</strong> (Di Bawah Ambang: {ambang_slider:.2f}).<br>
+                        <em>Rekomendasi:</em> Lesi terindikasi jinak / non-kanker. Tetap lakukan observasi klinis berkala jika terjadi evolusi asimetri, batas, atau warna.
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
 
-            # Telemetry Grid
+            # Baris Metrik Utama
             st.markdown(f"""
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-lbl">PREP</div>
-                    <div class="stat-val">{waktu_prep:.0f} ms</div>
+            <div class="metric-row">
+                <div class="metric-cell">
+                    <div class="metric-cell-lbl">Peluang Ganas P(Ganas)</div>
+                    <div class="metric-cell-val" style="color:{'#f87171' if status_ganas else '#34d399'};">{prob_ganas*100:.2f}%</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-lbl">INFERENSI</div>
-                    <div class="stat-val">{waktu_inf:.0f} ms</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-lbl">BACKBONE</div>
-                    <div class="stat-val">ConvNeXt</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-lbl">DEVICE</div>
-                    <div class="stat-val">CPU</div>
+                <div class="metric-cell">
+                    <div class="metric-cell-lbl">Keyakinan Sub-Kelas ({top_kelas})</div>
+                    <div class="metric-cell-val" style="color:#38bdf8;">{top_prob*100:.2f}%</div>
                 </div>
             </div>
             """, unsafe_allow_html=True)
-    else:
-        st.info("Pilih sampel demo di sebelah kiri atau unggah foto dermoskopi untuk memicu diagnosis.")
 
-# ─── SECTION 03: PIPELINE PRAPEMROSESAN & EKSTRAKSI FITUR ─────────────────────
-if citra_bgr is not None and "tahapan" in locals():
+            # Rincian 8 Sub-Kelas Lesi Kulit
+            st.markdown('<div style="font-size:0.76rem; font-weight:700; color:#94a3b8; text-transform:uppercase; margin-bottom:0.5rem; letter-spacing:0.04em;">DISTRIBUSI PROBABILITAS KELAS LESI</div>', unsafe_allow_html=True)
+
+            urutan = np.argsort(probs)[::-1]
+            for idx in urutan[:5]:  # 5 teratas
+                k = KELAS[idx]
+                p = probs[idx]
+                nama_sub = KELAS_NAMA[k]
+                tipe = KELAS_TIPE[k]
+                warna_grad = "linear-gradient(90deg, #f59e0b, #ef4444)" if tipe == "Malignant" else "linear-gradient(90deg, #38bdf8, #10b981)"
+                st.markdown(f"""
+                <div class="cat-bar-wrap">
+                    <div class="cat-bar-meta">
+                        <span style="color:#e2e8f0;">{nama_sub} <small style="color:#64748b;">({tipe})</small></span>
+                        <span style="font-family:'JetBrains Mono', monospace; color:#cbd5e1;">{p*100:.2f}%</span>
+                    </div>
+                    <div class="cat-track">
+                        <div class="cat-fill" style="width: {p*100}%; background: {warna_grad};"></div>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+
+            # Telemetri Komputasi Singkat
+            st.caption(f"⚡ Komputasi: Prep `{durasi_prep_ms:.1f} ms` | Inferensi `{durasi_inf_ms:.1f} ms` | Arsitektur: `ConvNeXtTiny-MHSA SWA`")
+    else:
+        st.info("Pilih sampel riset di kolom kiri atau unggah citra dermoskopi untuk memicu diagnosis.")
+
+    st.markdown("</div>", unsafe_allow_html=True)
+
+# ─── ZONE 03: ALUR PRAPEMROSESAN SAINTIFIK ────────────────────────────────────
+if citra_input_bgr is not None and "tahap_data" in locals():
     st.markdown("""
-    <div class="pipe-wrap">
-        <div class="sec-label" style="margin-bottom:0.85rem;"><span class="sec-num">03</span> ALUR PRAPEMROSESAN CITRA MEDIS & EKSTRAKSI FITUR</div>
-        <div class="pipe-flow">
-            <div class="pipe-node">
-                <img src="data:image/jpeg;base64,{}" alt="1" />
-                <div class="pipe-lbl">1 &bull; Citra Asli</div>
+    <div class="card-shell" style="margin-top:0.4rem;">
+        <div class="card-title"><span class="card-title-highlight">03.</span> ALUR PRAPEMROSESAN & NORMALISASI CITRA (TESIS RISET BIMA)</div>
+        <div class="pipe-container">
+            <div class="pipe-step-card">
+                <img src="data:image/jpeg;base64,{}" alt="Tahap 1" />
+                <div class="pipe-step-title">1 &bull; Citra Asli</div>
+                <div class="pipe-step-desc">Dermoskopi standar (256x256 px)</div>
             </div>
-            <div class="parr">&rsaquo;</div>
-            <div class="pipe-node">
-                <img src="data:image/jpeg;base64,{}" alt="2" />
-                <div class="pipe-lbl">2 &bull; Gaussian Blur</div>
+            <div class="pipe-step-card">
+                <img src="data:image/jpeg;base64,{}" alt="Tahap 2" />
+                <div class="pipe-step-title">2 &bull; Masking Otsu</div>
+                <div class="pipe-step-desc">Eliminasi batas vignetting lensa</div>
             </div>
-            <div class="parr">&rsaquo;</div>
-            <div class="pipe-node">
-                <img src="data:image/jpeg;base64,{}" alt="3" />
-                <div class="pipe-lbl">3 &bull; Masker Otsu</div>
+            <div class="pipe-step-card">
+                <img src="data:image/jpeg;base64,{}" alt="Tahap 3" />
+                <div class="pipe-step-title">3 &bull; Segmentasi ROI</div>
+                <div class="pipe-step-desc">Isolasi lesi + margin 15%</div>
             </div>
-            <div class="parr">&rsaquo;</div>
-            <div class="pipe-node">
-                <img src="data:image/jpeg;base64,{}" alt="4" />
-                <div class="pipe-lbl">4 &bull; ROI +15% Margin</div>
-            </div>
-            <div class="parr">&rsaquo;</div>
-            <div class="pipe-node">
-                <img src="data:image/jpeg;base64,{}" alt="5" />
-                <div class="pipe-lbl">5 &bull; Shades of Gray</div>
+            <div class="pipe-step-card">
+                <img src="data:image/jpeg;base64,{}" alt="Tahap 4" />
+                <div class="pipe-step-title">4 &bull; Shades of Gray (p=6)</div>
+                <div class="pipe-step-desc">Penyelarasan iluminasi & warna</div>
             </div>
         </div>
     </div>
     """.format(
-        ke_base64(tahapan["asli"]),
-        ke_base64(tahapan["abu"]),
-        ke_base64(tahapan["masker"]),
-        ke_base64(tahapan["roi"]),
-        ke_base64(tahapan["sog"])
+        enc_b64(tahap_data["asli"]),
+        enc_b64(tahap_data["masker"]),
+        enc_b64(tahap_data["roi"]),
+        enc_b64(tahap_data["sog"])
     ), unsafe_allow_html=True)
 
-# ─── FOOTER MINIMALIS ─────────────────────────────────────────────────────────
+# ─── FOOTER RESMI ─────────────────────────────────────────────────────────────
 st.markdown("""
-<div class="footer-note">
-    Alat bantu riset akademik (Hibah BIMA UTM 2026). Bukan pengganti diagnosis dokter spesialis patologi.
+<div class="footer-bar">
+    <strong>DERMASPARK</strong> &bull; Analisis Granularitas Partisi Memori Apache Spark & Klasifikasi Kanker Kulit ConvNeXtTiny-MHSA<br>
+    Asistensi Program Hibah Penelitian BIMA Kemendikbudristek 2026 &bull; Teknik Informatika Universitas Trunojoyo Madura<br>
+    <em>Peneliti: Aqbil Baraka (NIM 230411100077) &bull; Pembimbing: Fifin Ayu Mufarroha, S.Kom., M.Kom.</em><br>
+    <small style="color:#475569;">Pernyataan Etik: Sistem ini dirancang sebagai Decision Support System (DSS) berbasis bukti ilmiah riset dan bukan instrumen diagnosis mandiri tanpa supervisi spesialis patologi anatomi/dermatologi.</small>
 </div>
 """, unsafe_allow_html=True)

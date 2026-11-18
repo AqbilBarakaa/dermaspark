@@ -23,7 +23,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# ─── STYLING MODERN CLINICAL UI/UX ────────────────────────────────────────────
+# ─── STYLING PROFESIONAL MODERN (CLEAN, TIDAK BERANTAKAN) ────────────────────
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
@@ -39,9 +39,37 @@ st.markdown("""
     }
 
     .block-container {
-        padding-top: 1.25rem !important;
+        padding-top: 1.2rem !important;
         padding-bottom: 2.5rem !important;
         max-width: 1220px !important;
+    }
+
+    /* Container Border Card Styling */
+    [data-testid="stVerticalBlockBorderWrapper"] > div {
+        background-color: #FFFFFF !important;
+        border: 1px solid #E2E8F0 !important;
+        border-radius: 16px !important;
+        box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.04) !important;
+        padding: 1.35rem !important;
+    }
+
+    /* Segmented Control Full-Width Horizontal */
+    div[data-testid="stSegmentedControl"] {
+        width: 100% !important;
+        margin-bottom: 0.6rem !important;
+    }
+    div[data-testid="stSegmentedControl"] > div {
+        display: flex !important;
+        flex-direction: row !important;
+        width: 100% !important;
+    }
+    div[data-testid="stSegmentedControl"] button {
+        flex: 1 1 0 !important;
+        text-align: center !important;
+        padding: 0.40rem 0.5rem !important;
+        font-size: 0.82rem !important;
+        font-weight: 600 !important;
+        white-space: nowrap !important;
     }
 
     /* Top Brand Bar */
@@ -120,40 +148,19 @@ st.markdown("""
         font-weight: 600;
     }
 
-    /* Modern Card Container */
-    .clinical-card {
-        background: #FFFFFF;
-        border: 1px solid #E2E8F0;
-        border-radius: 16px;
-        padding: 1.35rem;
-        box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
-        margin-bottom: 1.25rem;
-    }
-    .card-top {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 1.1rem;
-        padding-bottom: 0.65rem;
-        border-bottom: 1px solid #F1F5F9;
-    }
-    .card-heading {
-        font-size: 0.98rem;
-        font-weight: 700;
-        color: #1E293B;
-        display: flex;
-        align-items: center;
-        gap: 0.45rem;
-    }
-    .card-chip {
-        font-size: 0.70rem;
-        font-weight: 700;
-        text-transform: uppercase;
+    /* Section Title */
+    .section-title {
+        font-size: 0.82rem;
+        font-weight: 800;
         letter-spacing: 0.05em;
-        padding: 0.2rem 0.55rem;
-        border-radius: 6px;
-        background: #EFF6FF;
-        color: #2563EB;
+        color: #475569;
+        text-transform: uppercase;
+        margin-bottom: 1.0rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #F1F5F9;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
     }
 
     /* Hero Triage Card */
@@ -208,7 +215,7 @@ st.markdown("""
         color: #FFFFFF;
     }
     .triage-title {
-        font-size: 1.42rem;
+        font-size: 1.40rem;
         font-weight: 800;
         letter-spacing: -0.01em;
         line-height: 1.2;
@@ -303,16 +310,6 @@ st.markdown("""
     }
 
     /* Native Class Progress Rows */
-    .class-group-title {
-        font-size: 0.80rem;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        margin: 0.8rem 0 0.45rem 0;
-        display: flex;
-        align-items: center;
-        gap: 0.35rem;
-    }
     .prob-container {
         display: flex;
         flex-direction: column;
@@ -404,17 +401,6 @@ st.markdown("""
         font-weight: 800;
         color: #0F172A;
         margin-top: 0.15rem;
-    }
-
-    /* Quick Sample Section */
-    .sample-chip-title {
-        font-size: 0.78rem;
-        font-weight: 700;
-        color: #475569;
-        margin: 0.8rem 0 0.4rem 0;
-        display: flex;
-        align-items: center;
-        gap: 0.35rem;
     }
 
     /* Minimal Modern Footer */
@@ -623,215 +609,183 @@ st.markdown("""
     </div>
     <div class="brand-badges">
         <span class="chip-status"><span class="dot-live"></span> Model Siap</span>
-        <span class="chip-meta">ConvNeXtTiny-MHSA • 8 Kelas</span>
+        <span class="chip-meta">ConvNeXtTiny-MHSA (85,26%)</span>
+        <span class="chip-meta">8 Kelas ISIC</span>
     </div>
 </div>
 """, unsafe_allow_html=True)
-
-# Inisialisasi Session State
-if "sample_selected" not in st.session_state:
-    st.session_state.sample_selected = "Melanoma_ISIC_0000054.jpg"
-if "sample_label" not in st.session_state:
-    st.session_state.sample_label = "Melanoma (Kanker Ganas Agresif)"
 
 # ─── WORKSPACE DUA KOLOM ──────────────────────────────────────────────────────
 col_input, col_report = st.columns([1, 1.25], gap="large")
 
 with col_input:
-    st.markdown(
-        '<div class="clinical-card">'
-        '<div class="card-top">'
-        '<div class="card-heading">📷 Masukan Citra Lesi</div>'
-        '<span class="card-chip">Input</span>'
-        '</div>',
-        unsafe_allow_html=True
-    )
+    with st.container(border=True):
+        st.markdown(
+            '<div class="section-title">01 &bull; MASUKAN CITRA LESI</div>',
+            unsafe_allow_html=True
+        )
 
-    # 1. Direct Dropzone Utama
-    file_up = st.file_uploader(
-        "Unggah foto dermoskopi (JPG / PNG):",
-        type=["jpg", "jpeg", "png"],
-        help="Mendukung citra dermoskopi resolusi tinggi."
-    )
+        metode_input = st.segmented_control(
+            "Metode Masukan",
+            options=["Sampel Demo", "Unggah Citra"],
+            default="Sampel Demo",
+            label_visibility="collapsed"
+        )
 
-    # 2. Tombol Quick Sample (1-Click)
-    st.markdown("<div class='sample-chip-title'>⚡ Atau coba sampel data uji instan (1-Klik):</div>", unsafe_allow_html=True)
-    c_s1, c_s2, c_s3 = st.columns(3)
-    with c_s1:
-        if st.button("🔴 Melanoma", use_container_width=True):
-            st.session_state.sample_selected = "Melanoma_ISIC_0000054.jpg"
-            st.session_state.sample_label = "Melanoma (Kanker Ganas Agresif)"
-    with c_s2:
-        if st.button("🟠 Basal Cell (BCC)", use_container_width=True):
-            st.session_state.sample_selected = "BCC_ISIC_0024436.jpg"
-            st.session_state.sample_label = "Basal Cell Carcinoma (Kanker Kulit)"
-    with c_s3:
-        if st.button("🟢 Tahi Lalat (NV)", use_container_width=True):
-            st.session_state.sample_selected = "Nevus_ISIC_0000009.jpg"
-            st.session_state.sample_label = "Melanocytic Nevus (Tahi Lalat Jinak)"
+        citra_bgr = None
+        label_sumber = ""
 
-    c_s4, c_s5 = st.columns(2)
-    with c_s4:
-        if st.button("🟡 Actinic Keratoses", use_container_width=True):
-            st.session_state.sample_selected = "AKIEC_ISIC_0024329.jpg"
-            st.session_state.sample_label = "Actinic Keratoses (Pra-Kanker)"
-    with c_s5:
-        if st.button("⚪ Keratosis Seboroik", use_container_width=True):
-            st.session_state.sample_selected = "BKL_ISIC_0012173.jpg"
-            st.session_state.sample_label = "Benign Keratosis (Lesi Jinak)"
+        if metode_input == "Sampel Demo":
+            pilihan_sampel = {
+                "Melanoma (Kanker Ganas Agresif) - ISIC_0000054": "Melanoma_ISIC_0000054.jpg",
+                "Basal Cell Carcinoma (Kanker Kulit) - ISIC_0024436": "BCC_ISIC_0024436.jpg",
+                "Actinic Keratoses (Pra-Kanker) - ISIC_0024329": "AKIEC_ISIC_0024329.jpg",
+                "Melanocytic Nevus (Tahi Lalat Jinak) - ISIC_0000009": "Nevus_ISIC_0000009.jpg",
+                "Benign Keratosis (Lesi Jinak) - ISIC_0012173": "BKL_ISIC_0012173.jpg"
+            }
+            terpilih = st.selectbox(
+                "Pilih Sampel Citra ISIC:",
+                list(pilihan_sampel.keys()),
+                help="Pilih sampel lesi kulit dari dataset standar ISIC."
+            )
+            berkas = SAMPLES_DIR / pilihan_sampel[terpilih]
+            if berkas.exists():
+                citra_bgr = cv2.imread(str(berkas))
+                label_sumber = terpilih
+        else:
+            file_up = st.file_uploader(
+                "Unggah foto dermoskopi (JPG / PNG):",
+                type=["jpg", "jpeg", "png"],
+                help="Mendukung citra dermoskopi resolusi tinggi."
+            )
+            if file_up is not None:
+                buf = np.asarray(bytearray(file_up.read()), dtype=np.uint8)
+                citra_bgr = cv2.imdecode(buf, cv2.IMREAD_COLOR)
+                label_sumber = f"File Unggahan: {file_up.name}"
 
-    # Evaluasi Sumber Citra
-    citra_bgr = None
-    label_sumber = ""
+        # Pratinjau Citra Terpilih
+        if citra_bgr is not None:
+            tahap = proses_citra(citra_bgr)
+            st.image(tahap["asli_rgb"], caption=f"Pratinjau: {label_sumber}", use_container_width=True)
 
-    if file_up is not None:
-        buf = np.asarray(bytearray(file_up.read()), dtype=np.uint8)
-        citra_bgr = cv2.imdecode(buf, cv2.IMREAD_COLOR)
-        label_sumber = f"Berkas Unggahan: {file_up.name}"
-    else:
-        sample_file = SAMPLES_DIR / st.session_state.sample_selected
-        if sample_file.exists():
-            citra_bgr = cv2.imread(str(sample_file))
-            label_sumber = f"Sampel Aktif: {st.session_state.sample_label}"
-
-    # Pratinjau Citra Terpilih
-    if citra_bgr is not None:
-        tahap = proses_citra(citra_bgr)
-        st.markdown(f"<div style='font-size:0.80rem; font-weight:700; color:#475569; margin-top:0.8rem; margin-bottom:0.3rem;'>{label_sumber}</div>", unsafe_allow_html=True)
-        st.image(tahap["asli_rgb"], caption="Citra Terpilih (256×256 px)", use_container_width=True)
-
-    # 3. Pengaturan Klinis Lanjutan (Expander Rapi)
-    with st.expander("⚙️ Pengaturan Ambang Batas Klinis (Threshold)", expanded=False):
-        ambang = st.slider("Ambang Batas Keganasan:", 0.0, 1.0, 0.42, 0.01)
-        st.caption("Batas ambang standar optimal riset: **0,42** (Sensitivitas 81,10% | Spesifisitas 87,66%). Nilai di atas ambang dikategorikan berisiko ganas.")
-
-    st.markdown("</div>", unsafe_allow_html=True)
+        # Pengaturan Ambang Batas Klinis
+        with st.expander("⚙️ Pengaturan Ambang Batas Klinis (Threshold)", expanded=False):
+            ambang = st.slider("Ambang Batas Keganasan:", 0.0, 1.0, 0.42, 0.01)
+            st.caption("Batas ambang standar optimal: **0,42** (Sensitivitas 81,10% | Spesifisitas 87,66%). Nilai di atas ambang dikategorikan berisiko ganas.")
 
 with col_report:
-    st.markdown(
-        '<div class="clinical-card">'
-        '<div class="card-top">'
-        '<div class="card-heading">📋 Triase & Hasil Skrining Klinis</div>'
-        '<span class="card-chip">Diagnosis</span>'
-        '</div>',
-        unsafe_allow_html=True
-    )
+    with st.container(border=True):
+        st.markdown(
+            '<div class="section-title">02 &bull; HASIL SKRINING & TRIASE KLINIS</div>',
+            unsafe_allow_html=True
+        )
 
-    if citra_bgr is not None:
-        model = muat_model()
-        if model is not None:
-            mean_t = torch.tensor(NORM_MEAN).view(1, 3, 1, 1)
-            std_t = torch.tensor(NORM_STD).view(1, 3, 1, 1)
-            x_norm = (tahap["tensor_sog"] - mean_t) / std_t
+        if citra_bgr is not None:
+            model = muat_model()
+            if model is not None:
+                mean_t = torch.tensor(NORM_MEAN).view(1, 3, 1, 1)
+                std_t = torch.tensor(NORM_STD).view(1, 3, 1, 1)
+                x_norm = (tahap["tensor_sog"] - mean_t) / std_t
 
-            t0 = time.time()
-            with torch.no_grad():
-                logits = model(x_norm)
-                probs = F.softmax(logits, dim=1)[0].numpy()
-            durasi_inf_ms = (time.time() - t0) * 1000
+                t0 = time.time()
+                with torch.no_grad():
+                    logits = model(x_norm)
+                    probs = F.softmax(logits, dim=1)[0].numpy()
+                durasi_inf_ms = (time.time() - t0) * 1000
 
-            top_idx = int(np.argmax(probs))
-            top_nama = KELAS_NAMA[KELAS[top_idx]]
-            top_prob = float(probs[top_idx])
+                top_idx = int(np.argmax(probs))
+                top_nama = KELAS_NAMA[KELAS[top_idx]]
+                top_prob = float(probs[top_idx])
 
-            prob_ganas = float(sum(probs[i] for i in MALIGNANT_IDX))
-            is_ganas = prob_ganas >= ambang
+                prob_ganas = float(sum(probs[i] for i in MALIGNANT_IDX))
+                is_ganas = prob_ganas >= ambang
 
-            # 1. KARTU TRIASE HERO
-            hero_cls = "malignant" if is_ganas else "benign"
-            badge_text = "⚠️ Terindikasi Ganas (Malignant)" if is_ganas else "🛡️ Terindikasi Jinak (Benign)"
-            urgency_text = "Tingkat Urgensi: TINGGI • Disarankan Rujukan Spesialis & Biopsi Jaringan" if is_ganas else "Tingkat Urgensi: RENDAH • Lesi Non-Malignan, Pemantauan Rutin (ABCDE)"
-            advice_text = (
-                f"Model mendeteksi akumulasi potensi keganasan sebesar <strong>{prob_ganas*100:.1f}%</strong> "
-                f"(melebihi ambang batas {ambang:.2f}). Diperlukan evaluasi klinis langsung dengan dokter spesialis dermatologi."
-                if is_ganas else
-                f"Model mendeteksi akumulasi potensi keganasan rendah sebesar <strong>{prob_ganas*100:.1f}%</strong> "
-                f"(di bawah ambang batas {ambang:.2f}). Pasien disarankan melakukan observasi mandiri jika ada perubahan bentuk/warna."
-            )
+                # 1. KARTU TRIASE HERO
+                hero_cls = "malignant" if is_ganas else "benign"
+                badge_text = "⚠️ Terindikasi Ganas (Malignant)" if is_ganas else "🛡️ Terindikasi Jinak (Benign)"
+                urgency_text = "Tingkat Urgensi: TINGGI • Disarankan Rujukan Spesialis & Biopsi Jaringan" if is_ganas else "Tingkat Urgensi: RENDAH • Lesi Non-Malignan, Pemantauan Rutin (ABCDE)"
+                advice_text = (
+                    f"Model mendeteksi akumulasi potensi keganasan sebesar <strong>{prob_ganas*100:.1f}%</strong> "
+                    f"(melebihi ambang batas {ambang:.2f}). Diperlukan evaluasi klinis langsung dengan dokter spesialis dermatologi."
+                    if is_ganas else
+                    f"Model mendeteksi akumulasi potensi keganasan rendah sebesar <strong>{prob_ganas*100:.1f}%</strong> "
+                    f"(di bawah ambang batas {ambang:.2f}). Pasien disarankan melakukan observasi mandiri jika ada perubahan bentuk/warna."
+                )
 
-            svg_donut = render_svg_donut(top_prob * 100, is_ganas)
+                svg_donut = render_svg_donut(top_prob * 100, is_ganas)
 
-            st.markdown(
-                f'<div class="triage-hero {hero_cls}">'
-                f'<div class="triage-left">{svg_donut}</div>'
-                f'<div class="triage-right">'
-                f'<span class="triage-badge">{badge_text}</span>'
-                f'<div class="triage-title">{top_nama}</div>'
-                f'<div class="triage-urgency">{urgency_text}</div>'
-                f'<div class="triage-desc">{advice_text}</div>'
-                f'</div>'
-                f'</div>',
-                unsafe_allow_html=True
-            )
+                st.markdown(
+                    f'<div class="triage-hero {hero_cls}">'
+                    f'<div class="triage-left">{svg_donut}</div>'
+                    f'<div class="triage-right">'
+                    f'<span class="triage-badge">{badge_text}</span>'
+                    f'<div class="triage-title">{top_nama}</div>'
+                    f'<div class="triage-urgency">{urgency_text}</div>'
+                    f'<div class="triage-desc">{advice_text}</div>'
+                    f'</div>'
+                    f'</div>',
+                    unsafe_allow_html=True
+                )
 
-            # 2. PENGUKUR RISIKO KEGANASAN KOMPREHENSIF (OMNI-MALIGNANCY SPECTRUM GAUGE)
-            tingkat_label = "Kritis" if prob_ganas >= 0.70 else ("Tinggi (Di Atas Ambang)" if prob_ganas >= ambang else ("Sedang" if prob_ganas >= 0.20 else "Rendah"))
-            color_risk = "#E11D48" if is_ganas else "#059669"
-            pointer_pct = min(max(prob_ganas * 100, 1.5), 98.5)
-            thresh_pct = ambang * 100
+                # 2. PENGUKUR RISIKO KEGANASAN KOMPREHENSIF (OMNI-MALIGNANCY SPECTRUM GAUGE)
+                tingkat_label = "Kritis" if prob_ganas >= 0.70 else ("Tinggi (Di Atas Ambang)" if prob_ganas >= ambang else ("Sedang" if prob_ganas >= 0.20 else "Rendah"))
+                color_risk = "#E11D48" if is_ganas else "#059669"
+                pointer_pct = min(max(prob_ganas * 100, 1.5), 98.5)
+                thresh_pct = ambang * 100
 
-            st.markdown(
-                f'<div class="spectrum-container">'
-                f'<div class="spectrum-header">'
-                f'<span class="spectrum-label">Omni-Malignancy Spectrum Gauge (Total Risiko Kanker Kulit)</span>'
-                f'<span class="spectrum-val" style="color:{color_risk};">{prob_ganas*100:.1f}% ({tingkat_label})</span>'
-                f'</div>'
-                f'<div class="spectrum-track">'
-                f'<div class="spectrum-threshold-line" style="left:{thresh_pct}%;">'
-                f'<span class="threshold-tag">Ambang {ambang:.2f}</span>'
-                f'</div>'
-                f'<div class="spectrum-pointer" style="left:{pointer_pct}%;"></div>'
-                f'</div>'
-                f'<div class="spectrum-footer">'
-                f'<span>0% (Aman / Jinak)</span>'
-                f'<span>Batas Optimal Kalibrasi ({thresh_pct:.0f}%)</span>'
-                f'<span>100% (Malignan)</span>'
-                f'</div>'
-                f'</div>',
-                unsafe_allow_html=True
-            )
+                st.markdown(
+                    f'<div class="spectrum-container">'
+                    f'<div class="spectrum-header">'
+                    f'<span class="spectrum-label">Spektrum Risiko Keganasan</span>'
+                    f'<span class="spectrum-val" style="color:{color_risk};">{prob_ganas*100:.1f}% ({tingkat_label})</span>'
+                    f'</div>'
+                    f'<div class="spectrum-track">'
+                    f'<div class="spectrum-threshold-line" style="left:{thresh_pct}%;"></div>'
+                    f'<div class="spectrum-pointer" style="left:{pointer_pct}%;"></div>'
+                    f'</div>'
+                    f'<div class="spectrum-footer">'
+                    f'<span>0% (Aman / Jinak)</span>'
+                    f'<span style="color:#2563EB; font-weight:700;">▲ Ambang Klinis ({thresh_pct:.0f}%)</span>'
+                    f'<span>100% (Malignan)</span>'
+                    f'</div>'
+                    f'</div>',
+                    unsafe_allow_html=True
+                )
 
-            # 3. RINCIAN 8 KELAS
-            st.markdown("<div style='font-size:0.86rem; font-weight:700; color:#334155; margin-bottom:0.6rem;'>Distribusi Probabilitas Spektrum 8 Kelas:</div>", unsafe_allow_html=True)
-            st.markdown(render_prob_bars(probs, top_idx), unsafe_allow_html=True)
+                # 3. RINCIAN 8 KELAS
+                st.markdown("<div style='font-size:0.84rem; font-weight:700; color:#334155; margin-bottom:0.6rem;'>Distribusi Probabilitas Spektrum 8 Kelas:</div>", unsafe_allow_html=True)
+                st.markdown(render_prob_bars(probs, top_idx), unsafe_allow_html=True)
 
-            # 4. 4 KOTAK STAT MIKRO OPERASIONAL
-            st.markdown(
-                f'<div class="quad-stat-grid">'
-                f'<div class="quad-stat-card"><div class="quad-stat-label">Pra-proses</div><div class="quad-stat-val">{tahap["prep_ms"]:.0f} ms</div></div>'
-                f'<div class="quad-stat-card"><div class="quad-stat-label">Inferensi</div><div class="quad-stat-val">{durasi_inf_ms:.0f} ms</div></div>'
-                f'<div class="quad-stat-card"><div class="quad-stat-label">Segmentasi</div><div class="quad-stat-val">Otsu ROI</div></div>'
-                f'<div class="quad-stat-card"><div class="quad-stat-label">Perangkat</div><div class="quad-stat-val">CPU</div></div>'
-                f'</div>',
-                unsafe_allow_html=True
-            )
-    else:
-        st.info("Pilih salah satu sampel lesi kulit di sebelah kiri atau unggah berkas foto untuk melihat hasil skrining.")
+                # 4. 4 KOTAK STAT MIKRO OPERASIONAL
+                st.markdown(
+                    f'<div class="quad-stat-grid">'
+                    f'<div class="quad-stat-card"><div class="quad-stat-label">Pra-proses</div><div class="quad-stat-val">{tahap["prep_ms"]:.0f} ms</div></div>'
+                    f'<div class="quad-stat-card"><div class="quad-stat-label">Inferensi</div><div class="quad-stat-val">{durasi_inf_ms:.0f} ms</div></div>'
+                    f'<div class="quad-stat-card"><div class="quad-stat-label">Segmentasi</div><div class="quad-stat-val">Otsu ROI</div></div>'
+                    f'<div class="quad-stat-card"><div class="quad-stat-label">Perangkat</div><div class="quad-stat-val">CPU</div></div>'
+                    f'</div>',
+                    unsafe_allow_html=True
+                )
+        else:
+            st.info("Pilih sampel lesi kulit di sebelah kiri atau unggah berkas foto untuk melihat hasil skrining.")
 
-    st.markdown("</div>", unsafe_allow_html=True)
-
-# ─── PIPELINE PRA-PEMROSESAN CITRA (COLLAPSIBLE SLEEK CARD) ───────────────────
+# ─── PIPELINE PRA-PEMROSESAN CITRA (CONTAINER TERSATUKAN) ─────────────────────
 if citra_bgr is not None:
-    st.markdown(
-        '<div class="clinical-card">'
-        '<div class="card-top">'
-        '<div class="card-heading">🔬 Tahapan Pra-pemrosesan Citra & Normalisasi Warna</div>'
-        '<span class="card-chip">Pipeline</span>'
-        '</div>',
-        unsafe_allow_html=True
-    )
+    with st.container(border=True):
+        st.markdown(
+            '<div class="section-title">03 &bull; TAHAPAN PRA-PEMROSESAN CITRA (ROI OTSU & NORMALISASI WARNA)</div>',
+            unsafe_allow_html=True
+        )
 
-    c1, c2, c3, c4 = st.columns(4)
-    with c1:
-        st.image(tahap["asli_rgb"], caption="1. Citra Asli (256×256)", use_container_width=True)
-    with c2:
-        st.image(tahap["masker_rgb"], caption="2. Masker Lingkaran & Otsu", use_container_width=True)
-    with c3:
-        st.image(tahap["roi_rgb"], caption="3. Segmentasi ROI (+15%)", use_container_width=True)
-    with c4:
-        st.image(tahap["sog_rgb"], caption="4. Normalisasi Warna (p=6)", use_container_width=True)
-
-    st.markdown("</div>", unsafe_allow_html=True)
+        c1, c2, c3, c4 = st.columns(4)
+        with c1:
+            st.image(tahap["asli_rgb"], caption="1. Citra Asli (256×256)", use_container_width=True)
+        with c2:
+            st.image(tahap["masker_rgb"], caption="2. Masker Lingkaran & Otsu", use_container_width=True)
+        with c3:
+            st.image(tahap["roi_rgb"], caption="3. Segmentasi ROI (+15%)", use_container_width=True)
+        with c4:
+            st.image(tahap["sog_rgb"], caption="4. Normalisasi Warna (p=6)", use_container_width=True)
 
 # ─── FOOTER BERSIH ────────────────────────────────────────────────────────────
 st.markdown("""

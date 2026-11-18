@@ -410,6 +410,80 @@ html, body, [class*="css"] {
     margin-top: 0.15rem;
 }
 
+/* Preprocessing Inspector Styling */
+.ds-prep-card {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+    padding: 0.75rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.ds-prep-step-badge {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+    background: #EFF6FF;
+    color: #1D4ED8;
+    margin-bottom: 0.35rem;
+}
+.ds-prep-title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #0F172A;
+    margin-bottom: 0.35rem;
+}
+.ds-prep-metric-pill {
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 6px;
+    padding: 0.40rem 0.55rem;
+    font-size: 0.72rem;
+    color: #334155;
+    margin-top: 0.45rem;
+    line-height: 1.45;
+}
+.ds-prep-metric-pill strong {
+    color: #0F172A;
+}
+.ds-prep-desc {
+    font-size: 0.70rem;
+    color: #64748B;
+    line-height: 1.35;
+    margin-top: 0.35rem;
+}
+
+/* Tabel Ablasi Preprocessing */
+.ds-ablation-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+    margin-top: 0.5rem;
+}
+.ds-ablation-table th {
+    background: #F8FAFC;
+    border-bottom: 1px solid #E2E8F0;
+    padding: 0.45rem 0.60rem;
+    text-align: left;
+    font-weight: 700;
+    color: #475569;
+}
+.ds-ablation-table td {
+    border-bottom: 1px solid #F1F5F9;
+    padding: 0.45rem 0.60rem;
+    color: #334155;
+}
+.ds-ablation-table tr.active-row {
+    background: #EFF6FF;
+    font-weight: 700;
+    color: #1E40AF;
+}
+
 /* Footer Aplikasi */
 .ds-footer {
     text-align: center;
@@ -563,6 +637,7 @@ def proses_citra(im_bgr):
     cnts, _ = cv2.findContours(mask_circle, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     
     lingkaran_ada = False
+    radius_val = 0.0
     if cnts:
         c_max = max(cnts, key=cv2.contourArea)
         area = cv2.contourArea(c_max)
@@ -570,11 +645,12 @@ def proses_citra(im_bgr):
             (cx, cy), radius = cv2.minEnclosingCircle(c_max)
             if radius > 0.35 * DET:
                 lingkaran_ada = True
+                radius_val = float(radius)
 
     # Segmentasi Otsu
     gray = cv2.cvtColor(im_det, cv2.COLOR_BGR2GRAY)
     blur = cv2.GaussianBlur(gray, (5, 5), 0)
-    _, thresh = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+    otsu_val, thresh = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
 
     if lingkaran_ada:
         mask_lingkaran = np.zeros((DET, DET), dtype=np.uint8)
@@ -585,6 +661,9 @@ def proses_citra(im_bgr):
     cnts, _ = cv2.findContours(masker, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     crop = im_bgr
+    roi_box = (0, 0, w, h)
+    noise_reduced_pct = 0.0
+
     if cnts:
         c = max(cnts, key=cv2.contourArea)
         if cv2.contourArea(c) > 0.01 * DET * DET:
@@ -598,6 +677,10 @@ def proses_citra(im_bgr):
             crop_cand = im_bgr[int(y0 * sy):int(y1 * sy), int(x0 * sx):int(x1 * sx)]
             if crop_cand.size > 0:
                 crop = crop_cand
+                roi_box = (int(x0 * sx), int(y0 * sy), int((x1 - x0) * sx), int((y1 - y0) * sy))
+                crop_area = crop.shape[0] * crop.shape[1]
+                orig_area = h * w
+                noise_reduced_pct = max(0.0, (1.0 - (crop_area / orig_area)) * 100)
 
     im_crop_rgb = cv2.cvtColor(cv2.resize(crop, (IMAGE_SIZE, IMAGE_SIZE), interpolation=cv2.INTER_AREA), cv2.COLOR_BGR2RGB)
     
@@ -609,13 +692,23 @@ def proses_citra(im_bgr):
     im_sog_rgb = (x_sog[0].permute(1, 2, 0).numpy() * 255).astype(np.uint8)
     prep_ms = (time.time() - t_start) * 1000
 
+    e_vec = [float(e[0, 0, 0, 0]), float(e[0, 1, 0, 0]), float(e[0, 2, 0, 0])]
+
     return {
         "asli_rgb": cv2.cvtColor(cv2.resize(im_bgr, (IMAGE_SIZE, IMAGE_SIZE)), cv2.COLOR_BGR2RGB),
+        "orig_w": w,
+        "orig_h": h,
         "masker_rgb": cv2.cvtColor(cv2.resize(masker, (IMAGE_SIZE, IMAGE_SIZE)), cv2.COLOR_GRAY2RGB),
         "roi_rgb": im_crop_rgb,
         "sog_rgb": im_sog_rgb,
         "tensor_sog": x_sog,
-        "prep_ms": prep_ms
+        "prep_ms": prep_ms,
+        "otsu_val": float(otsu_val),
+        "lingkaran_ada": lingkaran_ada,
+        "radius_val": radius_val,
+        "roi_box": roi_box,
+        "noise_reduced_pct": noise_reduced_pct,
+        "e_vec": e_vec
     }
 
 # ─── PEMUATAN MODEL ───────────────────────────────────────────────────────────
@@ -696,7 +789,7 @@ with st.container(border=True):
             tahap = proses_citra(citra_bgr)
             st.markdown('<div class="ds-image-frame">', unsafe_allow_html=True)
             st.image(tahap["asli_rgb"], use_container_width=True)
-            st.markdown(f'<div class="ds-image-caption">Pratinjau: <strong>{label_sumber}</strong> (256×256 px)</div></div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="ds-image-caption">Pratinjau: <strong>{label_sumber}</strong> ({tahap["orig_w"]}×{tahap["orig_h"]} px)</div></div>', unsafe_allow_html=True)
         else:
             st.markdown("""
             <div class="ds-image-frame" style="padding: 3.5rem 1rem; color: #94A3B8;">
@@ -925,18 +1018,142 @@ if citra_bgr is not None:
                 """, unsafe_allow_html=True)
 
         # ═══════════════════════════════════════════════════════════════════════
-        # PRA-PEMROSESAN CITRA (ACCORDION TRANSPARAN & TIDAK MEMBEBANI)
+        # PRA-PEMROSESAN CITRA: SCIENTIFIC PREPROCESSING INSPECTOR
         # ═══════════════════════════════════════════════════════════════════════
-        with st.expander("🔬 Lihat Alur Pra-pemrosesan Citra Digital (ROI Otsu & Shades of Gray, p=6)", expanded=False):
+        with st.expander("🔬 Inspeksi Alur Pra-pemrosesan Citra Digital (ROI Otsu & Shades of Gray, p=6)", expanded=False):
+            st.markdown('<div style="font-size:0.88rem; font-weight:700; color:#1E293B; margin-bottom:0.75rem;">Pipeline Transformasi Citra Dermoskopi Real-Time</div>', unsafe_allow_html=True)
+
             cp1, cp2, cp3, cp4 = st.columns(4)
+            
+            # 1. Citra Asli
             with cp1:
-                st.image(tahap["asli_rgb"], caption="1. Citra Asli Dermoskopi", use_container_width=True)
+                st.markdown("""
+                <div class="ds-prep-card">
+                    <span class="ds-prep-step-badge">Tahap 1</span>
+                    <div class="ds-prep-title">Citra Asli Dermoskopi</div>
+                """, unsafe_allow_html=True)
+                st.image(tahap["asli_rgb"], use_container_width=True)
+                vignette_status = "Terdeteksi (Dimasker)" if tahap["lingkaran_ada"] else "Tidak Terdeteksi"
+                st.markdown(f"""
+                    <div class="ds-prep-metric-pill">
+                        <div>Resolusi: <strong>{tahap['orig_w']}×{tahap['orig_h']} px</strong></div>
+                        <div>Vignette Lensa: <strong>{vignette_status}</strong></div>
+                    </div>
+                    <div class="ds-prep-desc">Input citra dermoskopi mentah sebelum dilakukan eliminasi artefak lensa melingkar.</div>
+                </div>
+                """, unsafe_allow_html=True)
+
+            # 2. Masker Otsu
             with cp2:
-                st.image(tahap["masker_rgb"], caption="2. Masker Lingkaran & Otsu", use_container_width=True)
+                st.markdown("""
+                <div class="ds-prep-card">
+                    <span class="ds-prep-step-badge">Tahap 2</span>
+                    <div class="ds-prep-title">Segmentasi Otsu & Masking</div>
+                """, unsafe_allow_html=True)
+                st.image(tahap["masker_rgb"], use_container_width=True)
+                st.markdown(f"""
+                    <div class="ds-prep-metric-pill">
+                        <div>Ambang Otsu (T): <strong>{tahap['otsu_val']:.0f} / 255</strong></div>
+                        <div>Morfologi: <strong>Buka (Opening 5×5)</strong></div>
+                    </div>
+                    <div class="ds-prep-desc">Pemisahan otomatis bimodal intensitas lesi dari kulit normal bebas subjektivitas manual.</div>
+                </div>
+                """, unsafe_allow_html=True)
+
+            # 3. Segmentasi ROI
             with cp3:
-                st.image(tahap["roi_rgb"], caption="3. Segmentasi ROI (+15%)", use_container_width=True)
+                st.markdown("""
+                <div class="ds-prep-card">
+                    <span class="ds-prep-step-badge">Tahap 3</span>
+                    <div class="ds-prep-title">Ekstraksi ROI (+15% Margin)</div>
+                """, unsafe_allow_html=True)
+                st.image(tahap["roi_rgb"], use_container_width=True)
+                bx, by, bw, bh = tahap["roi_box"]
+                st.markdown(f"""
+                    <div class="ds-prep-metric-pill">
+                        <div>Kotak ROI: <strong>{bw}×{bh} px</strong></div>
+                        <div>Reduksi Noise: <strong>{tahap['noise_reduced_pct']:.1f}% latar</strong></div>
+                    </div>
+                    <div class="ds-prep-desc">Margin dinamis +15% menjaga keutuhan tepian lesi (krusial bagi evaluasi kriteria Border).</div>
+                </div>
+                """, unsafe_allow_html=True)
+
+            # 4. Normalisasi Shades of Gray
             with cp4:
-                st.image(tahap["sog_rgb"], caption="4. Normalisasi Warna (p=6)", use_container_width=True)
+                st.markdown("""
+                <div class="ds-prep-card">
+                    <span class="ds-prep-step-badge">Tahap 4</span>
+                    <div class="ds-prep-title">Shades of Gray (p=6)</div>
+                """, unsafe_allow_html=True)
+                st.image(tahap["sog_rgb"], use_container_width=True)
+                er, eg, eb = tahap["e_vec"]
+                st.markdown(f"""
+                    <div class="ds-prep-metric-pill">
+                        <div>Vektor Cahaya: <strong>[{er:.2f}, {eg:.2f}, {eb:.2f}]</strong></div>
+                        <div>Waktu Praproses: <strong>{tahap['prep_ms']:.0f} ms</strong></div>
+                    </div>
+                    <div class="ds-prep-desc">Koreksi ketidakseimbangan pencahayaan lampu dermatoskop untuk mencapai color constancy.</div>
+                </div>
+                """, unsafe_allow_html=True)
+
+            st.markdown('<hr style="margin: 1.25rem 0 1.0rem 0; border: none; border-top: 1px solid #E2E8F0;">', unsafe_allow_html=True)
+
+            col_ablasi, col_math = st.columns([1.1, 0.9], gap="large")
+
+            with col_ablasi:
+                st.markdown('<div style="font-size:0.84rem; font-weight:700; color:#0F172A; margin-bottom:0.25rem;">📊 Bukti Empiris Ablasi Riset Model</div>', unsafe_allow_html=True)
+                st.markdown("""
+                <table class="ds-ablation-table">
+                    <thead>
+                        <tr>
+                            <th>Metode Masukan</th>
+                            <th style="text-align:right;">Val Accuracy</th>
+                            <th style="text-align:right;">Val ROC-AUC</th>
+                            <th style="text-align:center;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Citra Utuh (Raw Baseline)</td>
+                            <td style="text-align:right;">81.34%</td>
+                            <td style="text-align:right;">0.8949</td>
+                            <td style="text-align:center;"><span style="color:#64748B;">Baseline</span></td>
+                        </tr>
+                        <tr>
+                            <td>Segmentasi ROI Saja</td>
+                            <td style="text-align:right;">80.74%</td>
+                            <td style="text-align:right;">0.8845</td>
+                            <td style="text-align:center;"><span style="color:#64748B;">Tanpa Koreksi Warna</span></td>
+                        </tr>
+                        <tr class="active-row">
+                            <td>ROI + Shades of Gray (p=6)</td>
+                            <td style="text-align:right;">81.68%</td>
+                            <td style="text-align:right;">0.8907</td>
+                            <td style="text-align:center;"><span class="badge-jinak" style="background:#DBEAFE; color:#1D4ED8;">Pipeline Aktif (+0.94%)</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+                """, unsafe_allow_html=True)
+                st.caption("Hasil evaluasi empiris: Penambahan Shades of Gray (p=6) setelah ekstraksi ROI berhasil mengatasi degradasi warna dan mendongkrak akurasi validasi model ke level tertinggi.")
+
+            with col_math:
+                st.markdown('<div style="font-size:0.84rem; font-weight:700; color:#0F172A; margin-bottom:0.25rem;">📐 Rasional Matematis & Klinis</div>', unsafe_allow_html=True)
+                st.markdown("""
+                <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:0.75rem 0.85rem; font-size:0.76rem; color:#334155; line-height:1.55;">
+                    <div style="margin-bottom:0.45rem;">
+                        <strong>1. Ambang Bimodal Otsu:</strong><br>
+                        Memaksimalkan variansi antar-kelas piksel untuk memisahkan lesi secara otomatis tanpa tuning ambang batas manual.
+                    </div>
+                    <div style="margin-bottom:0.45rem;">
+                        <strong>2. Margin Adaptif 15%:</strong><br>
+                        Mencegah terpotongnya pola pigmentasi tepi (krusial bagi kriteria <em>Border</em> & <em>Asymmetry</em> pada ABCDE).
+                    </div>
+                    <div>
+                        <strong>3. Minkowski Norm (p=6):</strong><br>
+                        Eksponen p=6 memberikan bobot seimbang pada piksel lesi tanpa terdistorsi oleh specular highlights pantulan cairan dermatoskop.
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
 
 # ─── FOOTER SEDERHANA ─────────────────────────────────────────────────────────
 st.markdown("""

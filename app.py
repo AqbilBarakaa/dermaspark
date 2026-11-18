@@ -23,230 +23,402 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# ─── STYLING PROFESIONAL DISIPLIN & BERSIH (ANTI-AISLOP) ─────────────────────
+# ─── STYLING MODERN CLINICAL CLEAN ───────────────────────────────────────────
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
-    html, body, [class*="css"] {
-        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        color: #0F172A;
-    }
+html, body, [class*="css"] {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #0F172A;
+}
 
-    .stApp {
-        background-color: #F8FAFC;
-    }
+.stApp {
+    background-color: #F8FAFC;
+}
 
-    .block-container {
-        padding-top: 1.5rem !important;
-        padding-bottom: 2.5rem !important;
-        max-width: 1140px !important;
-    }
+.block-container {
+    padding-top: 1.4rem !important;
+    padding-bottom: 3.0rem !important;
+    max-width: 1040px !important;
+}
 
-    /* Header Bersih & Disiplin */
-    .app-header {
-        background: #FFFFFF;
-        border: 1px solid #E2E8F0;
-        border-radius: 12px;
-        padding: 1.1rem 1.4rem;
-        margin-bottom: 1.25rem;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-    .app-header-left {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-    .app-header-icon {
-        font-size: 1.6rem;
-    }
-    .app-header-title {
-        font-size: 1.35rem;
-        font-weight: 700;
-        color: #0F172A;
-        line-height: 1.2;
-    }
-    .app-header-desc {
-        font-size: 0.82rem;
-        color: #64748B;
-    }
-    .app-header-badge {
-        font-size: 0.75rem;
-        font-weight: 600;
-        color: #475569;
-        background: #F1F5F9;
-        border: 1px solid #E2E8F0;
-        padding: 0.35rem 0.75rem;
-        border-radius: 6px;
-    }
+/* Header Aplikasi Medis */
+.ds-header {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 14px;
+    padding: 1.1rem 1.5rem;
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+.ds-header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+}
+.ds-header-icon {
+    font-size: 1.8rem;
+    background: #EFF6FF;
+    border: 1px solid #DBEAFE;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+}
+.ds-header-title {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #0F172A;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+}
+.ds-header-subtitle {
+    font-size: 0.82rem;
+    color: #64748B;
+    margin-top: 0.15rem;
+}
+.ds-header-badge {
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: #334155;
+    background: #F1F5F9;
+    border: 1px solid #E2E8F0;
+    padding: 0.35rem 0.80rem;
+    border-radius: 6px;
+}
 
-    /* Container Card */
-    [data-testid="stVerticalBlockBorderWrapper"] > div {
-        background-color: #FFFFFF !important;
-        border: 1px solid #E2E8F0 !important;
-        border-radius: 12px !important;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
-        padding: 1.25rem !important;
-    }
+/* Penataan Kartu Container Streamlit */
+[data-testid="stVerticalBlockBorderWrapper"] > div {
+    background-color: #FFFFFF !important;
+    border: 1px solid #E2E8F0 !important;
+    border-radius: 14px !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03) !important;
+    padding: 1.35rem 1.5rem !important;
+    margin-bottom: 1.25rem !important;
+}
 
-    .box-title {
-        font-size: 0.90rem;
-        font-weight: 700;
-        color: #1E293B;
-        margin-bottom: 1.0rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 1px solid #F1F5F9;
-        text-transform: uppercase;
-        letter-spacing: 0.03em;
-    }
+/* Header Section per Tingkat */
+.ds-section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #1E293B;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding-bottom: 0.65rem;
+    margin-bottom: 1.1rem;
+    border-bottom: 1px solid #F1F5F9;
+}
+.ds-step-num {
+    background: #2563EB;
+    color: #FFFFFF;
+    font-size: 0.72rem;
+    width: 22px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-weight: 800;
+}
 
-    /* Status Banner Klinis */
-    .status-card {
-        border-radius: 8px;
-        padding: 1.1rem 1.25rem;
-        margin-bottom: 1.2rem;
-    }
-    .status-card.malignant {
-        background-color: #FEF2F2;
-        border-left: 4px solid #DC2626;
-        color: #991B1B;
-    }
-    .status-card.benign {
-        background-color: #F0FDF4;
-        border-left: 4px solid #16A34A;
-        color: #166534;
-    }
-    .status-badge {
-        font-size: 0.75rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-        margin-bottom: 0.25rem;
-    }
-    .status-title {
-        font-size: 1.35rem;
-        font-weight: 700;
-        line-height: 1.25;
-        margin-bottom: 0.3rem;
-    }
-    .status-urgency {
-        font-size: 0.82rem;
-        font-weight: 600;
-        margin-bottom: 0.4rem;
-    }
-    .status-desc {
-        font-size: 0.85rem;
-        line-height: 1.5;
-        color: #334155;
-    }
+/* Frame Pratinjau Citra */
+.ds-image-frame {
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+    padding: 0.65rem;
+    text-align: center;
+}
+.ds-image-caption {
+    font-size: 0.78rem;
+    color: #64748B;
+    margin-top: 0.45rem;
+    font-weight: 500;
+}
 
-    /* Tabel Hasil Uji Klinis (Disiplin & Terstruktur) */
-    .lab-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 0.84rem;
-        margin-bottom: 1.0rem;
-    }
-    .lab-table th {
-        text-align: left;
-        padding: 0.55rem 0.75rem;
-        font-weight: 600;
-        color: #64748B;
-        border-bottom: 1px solid #E2E8F0;
-        background: #F8FAFC;
-    }
-    .lab-table td {
-        padding: 0.60rem 0.75rem;
-        border-bottom: 1px solid #F1F5F9;
-        color: #1E293B;
-        vertical-align: middle;
-    }
-    .lab-table tr.top-row {
-        background-color: #F8FAFC;
-        font-weight: 600;
-    }
-    .tag-jinak {
-        display: inline-block;
-        padding: 0.15rem 0.5rem;
-        border-radius: 4px;
-        background: #DCFCE7;
-        color: #15803D;
-        font-size: 0.70rem;
-        font-weight: 600;
-    }
-    .tag-ganas {
-        display: inline-block;
-        padding: 0.15rem 0.5rem;
-        border-radius: 4px;
-        background: #FEE2E2;
-        color: #B91C1C;
-        font-size: 0.70rem;
-        font-weight: 600;
-    }
-    .bar-bg {
-        width: 100%;
-        height: 6px;
-        background: #E2E8F0;
-        border-radius: 3px;
-        overflow: hidden;
-    }
-    .bar-fill {
-        height: 100%;
-        border-radius: 3px;
-    }
+/* Tingkat 2: Banner Diagnosis Utama */
+.ds-diagnosis-card {
+    border-radius: 12px;
+    padding: 1.35rem 1.5rem;
+    margin-bottom: 1.15rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.0rem;
+}
+.ds-diagnosis-card.malignant {
+    background: #FFF1F2;
+    border: 1px solid #FECDD3;
+    border-left: 6px solid #E11D48;
+}
+.ds-diagnosis-card.benign {
+    background: #F0FDF4;
+    border: 1px solid #BBF7D0;
+    border-left: 6px solid #10B981;
+}
 
-    /* Ringkasan Parameter */
-    .meta-footer {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background: #F8FAFC;
-        border: 1px solid #E2E8F0;
-        border-radius: 8px;
-        padding: 0.65rem 0.95rem;
-        font-size: 0.78rem;
-        color: #64748B;
-        margin-top: 0.75rem;
-    }
+.ds-diag-badge {
+    display: inline-block;
+    font-size: 0.74rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0.25rem 0.65rem;
+    border-radius: 6px;
+    margin-bottom: 0.45rem;
+}
+.ds-diag-badge.malignant {
+    background: #FFE4E6;
+    color: #9F1239;
+}
+.ds-diag-badge.benign {
+    background: #DCFCE7;
+    color: #166534;
+}
 
-    /* Detail Informasi Klinis Lengkap */
-    .clinical-detail-card {
-        background: #F8FAFC;
-        border: 1px solid #E2E8F0;
-        border-radius: 8px;
-        padding: 0.95rem 1.1rem;
-        margin-top: 1.0rem;
-    }
-    .detail-sec-title {
-        font-size: 0.88rem;
-        font-weight: 700;
-        color: #1E293B;
-        margin-bottom: 0.55rem;
-        border-bottom: 1px solid #E2E8F0;
-        padding-bottom: 0.35rem;
-    }
-    .detail-item {
-        font-size: 0.82rem;
-        color: #334155;
-        line-height: 1.55;
-        margin-bottom: 0.45rem;
-    }
-    .detail-label {
-        font-weight: 700;
-        color: #0F172A;
-    }
+.ds-diag-title {
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: #0F172A;
+    line-height: 1.25;
+    margin-bottom: 0.35rem;
+}
+.ds-diag-urgency {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+.ds-diag-urgency.malignant {
+    color: #BE123C;
+}
+.ds-diag-urgency.benign {
+    color: #15803D;
+}
 
-    /* Footer Sederhana */
-    .app-footer {
-        text-align: center;
-        padding-top: 1.5rem;
-        margin-top: 1.5rem;
-        font-size: 0.80rem;
-        color: #94A3B8;
-        border-top: 1px solid #E2E8F0;
-    }
+.ds-score-box {
+    background: #FFFFFF;
+    border-radius: 10px;
+    padding: 0.80rem 1.15rem;
+    text-align: right;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border: 1px solid #E2E8F0;
+    min-width: 160px;
+}
+.ds-score-label {
+    font-size: 0.72rem;
+    color: #64748B;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+.ds-score-value {
+    font-size: 1.60rem;
+    font-weight: 800;
+    color: #0F172A;
+    line-height: 1.1;
+    margin: 0.15rem 0;
+}
+.ds-score-tag {
+    font-size: 0.70rem;
+    font-weight: 700;
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+/* Tingkat 2: Visual Risk Meter */
+.ds-risk-meter-container {
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 1.15rem 1.35rem;
+}
+.ds-meter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.60rem;
+}
+.ds-meter-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #1E293B;
+}
+.ds-meter-stat {
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+.ds-meter-track {
+    position: relative;
+    height: 16px;
+    background: #E2E8F0;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+}
+.ds-meter-zone-safe {
+    width: 42%;
+    background: #DCFCE7;
+    height: 100%;
+    border-right: 2px dashed #64748B;
+}
+.ds-meter-zone-alert {
+    width: 58%;
+    background: #FEE2E2;
+    height: 100%;
+}
+.ds-meter-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    border-radius: 8px;
+    transition: width 0.4s ease;
+}
+.ds-meter-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    color: #64748B;
+    margin-top: 0.40rem;
+    font-weight: 600;
+}
+.ds-meter-explanation {
+    font-size: 0.82rem;
+    color: #475569;
+    margin-top: 0.60rem;
+    line-height: 1.5;
+}
+
+/* Tingkat 3: Kartu Distribusi & Info Klinis */
+.ds-dist-card {
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+    padding: 0.70rem 0.90rem;
+    margin-bottom: 0.55rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.ds-dist-card.top1 {
+    background: #EFF6FF;
+    border-color: #BFDBFE;
+}
+.ds-dist-name {
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: #1E293B;
+}
+.ds-dist-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+.ds-dist-pct {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #0F172A;
+    min-width: 54px;
+    text-align: right;
+}
+
+/* Badge Kategori */
+.badge-ganas {
+    background: #FEE2E2;
+    color: #991B1B;
+    font-size: 0.70rem;
+    font-weight: 700;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+}
+.badge-jinak {
+    background: #DCFCE7;
+    color: #166534;
+    font-size: 0.70rem;
+    font-weight: 700;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+}
+
+/* Detail Klinis */
+.ds-clinical-block {
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+    padding: 1.05rem;
+    margin-bottom: 0.85rem;
+}
+.ds-clinical-heading {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #0F172A;
+    margin-bottom: 0.55rem;
+    padding-bottom: 0.35rem;
+    border-bottom: 1px solid #E2E8F0;
+}
+.ds-clinical-p {
+    font-size: 0.82rem;
+    color: #334155;
+    line-height: 1.55;
+    margin-bottom: 0.50rem;
+}
+.ds-clinical-label {
+    font-weight: 700;
+    color: #0F172A;
+}
+
+/* Kotak ABCDE */
+.ds-abcde-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.45rem;
+    margin-top: 0.60rem;
+}
+.ds-abcde-item {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 0.50rem 0.40rem;
+    text-align: center;
+}
+.ds-abcde-letter {
+    font-size: 1.0rem;
+    font-weight: 800;
+    color: #2563EB;
+    line-height: 1.0;
+    margin-bottom: 0.15rem;
+}
+.ds-abcde-title {
+    font-size: 0.70rem;
+    font-weight: 700;
+    color: #0F172A;
+}
+.ds-abcde-desc {
+    font-size: 0.64rem;
+    color: #64748B;
+    line-height: 1.3;
+    margin-top: 0.15rem;
+}
+
+/* Footer Aplikasi */
+.ds-footer {
+    text-align: center;
+    padding-top: 1.5rem;
+    margin-top: 1.75rem;
+    font-size: 0.78rem;
+    color: #94A3B8;
+    border-top: 1px solid #E2E8F0;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -259,7 +431,7 @@ SAMPLES_DIR = BASE_DIR / "samples"
 IMAGE_SIZE = 256
 KELAS = ["AKIEC", "BCC", "BKL", "DF", "MEL", "NV", "SCC", "VASC"]
 KELAS_NAMA = {
-    "AKIEC": "Actinic Keratosis (Pra-Kanker)",
+    "AKIEC": "Actinic Keratosis (Lesi Pra-Kanker)",
     "BCC": "Basal Cell Carcinoma (Kanker Kulit)",
     "BKL": "Benign Keratosis (Lesi Jinak)",
     "DF": "Dermatofibroma (Lesi Jinak)",
@@ -283,54 +455,55 @@ PENJELASAN_MEDIS = {
     "MEL": {
         "nama_lengkap": "Melanoma Maligna (Kanker Kulit Ganas)",
         "definisi": "Kanker kulit paling agresif dan berbahaya yang berkembang dari sel melanosit (penghasil pigmen). Memiliki potensi metastasis (penyebaran) cepat ke kelenjar getah bening dan organ tubuh lain jika tidak ditangani sejak dini.",
-        "ciri_klinis": "Asimetris, batas tepi tidak beraturan/bergerigi, warna bervariasi (hitam, cokelat, kebiruan), diameter sering >6 mm, dan mengalami perubahan bentuk/ukuran (kriteria ABCDE).",
-        "panduan_tindakan": "Segera lakukan rujukan ke dokter spesialis dermatologi untuk pemeriksaan dermoskopi digital lanjutan, biopsi eksisi diagnostik, dan penentuan ketebalan Breslow."
+        "ciri_klinis": "Bentuk asimetris, batas tepi bergerigi/tidak teratur, variasi warna tidak merata (hitam, cokelat tua, kebiruan), diameter seringkali >6 mm, dan terus mengalami perubahan (kriteria ABCDE).",
+        "panduan_tindakan": "Segera lakukan rujukan ke dokter spesialis dermatologi untuk pemeriksaan dermoskopi digital lanjutan, biopsi eksisi diagnostik, dan penentuan kedalaman invasi Breslow."
     },
     "BCC": {
         "nama_lengkap": "Basal Cell Carcinoma (Kanker Sel Basal)",
-        "definisi": "Jenis kanker kulit non-melanoma paling sering ditemukan di dunia. Tumbuh lambat dari lapisan basal epidermis akibat akumulasi radiasi ultraviolet (UV) jangka panjang.",
-        "ciri_klinis": "Benjolan mengkilap (pearly papule), pelebaran pembuluh darah halus (telangiektasia), tepi menggulung, dan lesi luka/borok kecil yang mudah berdarah atau sulit sembuh.",
-        "panduan_tindakan": "Jarang bermetastasis ke organ jauh namun bersifat destruktif lokal terhadap jaringan sekitarnya. Disarankan konsultasi untuk tindakan eksisi bedah, bedah Mohs, atau kuretase."
+        "definisi": "Kanker kulit non-melanoma paling umum di dunia, berkembang lambat dari lapisan basal epidermis akibat akumulasi radiasi ultraviolet (UV) kronis.",
+        "ciri_klinis": "Papula mengkilap seperti mutiara (pearly papule), pelebaran pembuluh darah halus (telangiektasia), tepi menggulung, atau ulserasi sentral yang mudah berdarah dan sulit sembuh.",
+        "panduan_tindakan": "Jarang bermetastasis jauh namun bersifat destruktif lokal terhadap jaringan lunak dan tulang di sekitarnya. Dianjurkan konsultasi untuk tindakan bedah eksisi atau bedah mikrografi Mohs."
     },
     "SCC": {
         "nama_lengkap": "Squamous Cell Carcinoma (Kanker Sel Skuamosa)",
-        "definisi": "Kanker kulit ganas kedua paling umum, berasal dari keratinosit lapisan epidermis. Berkembang akibat paparan sinar matahari kronis atau lesi pra-kanker sebelumnya.",
-        "ciri_klinis": "Plak kemerahan menebal bersisik, nodul keras yang mudah berdarah, atau luka berkeropeng tebal yang menetap di area terpapar matahari.",
-        "panduan_tindakan": "Memiliki risiko penyebaran sekitar 2-5% ke kelenjar getah bening. Disarankan pemeriksaan histopatologi melalui biopsi serta tindakan eksisi bedah definitif."
+        "definisi": "Kanker kulit ganas kedua paling umum, berasal dari keratinosit lapisan epidermis. Berkembang akibat paparan sinar matahari jangka panjang atau transformasi dari lesi pra-kanker sebelumnya.",
+        "ciri_klinis": "Plak kemerahan menebal bersisik tebal, nodul keras yang mudah berdarah saat tergores, atau luka berkeropeng kronis pada area kulit yang sering terpapar sinar matahari.",
+        "panduan_tindakan": "Memiliki risiko penyebaran 2-5% ke kelenjar getah bening regional. Memerlukan pemeriksaan histopatologi melalui biopsi serta tindakan eksisi bedah kuratif."
     },
     "AKIEC": {
         "nama_lengkap": "Actinic Keratosis / Bowen's Disease (Lesi Pra-Kanker)",
-        "definisi": "Lesi pra-kanker (pre-malignant) pada lapisan epidermis akibat kerusakan DNA oleh sinar UV kronis. Sekitar 10-20% lesi ini berpotensi bertransformasi menjadi Kanker Sel Skuamosa (SCC) invasif bila tidak ditangani.",
-        "ciri_klinis": "Bercak kasar berpasir, kering, bersisik, berwarna kemerahan atau kecokelatan, sering muncul di wajah, daun telinga, bibir, atau punggung tangan.",
-        "panduan_tindakan": "Dianjurkan konsultasi dermatologi untuk terapi pencegahan sebelum berkembang menjadi kanker invasif (krioterapi nitrogen cair, krim topikal, atau fotodinamik)."
+        "definisi": "Lesi pra-kanker (pre-malignant) pada epidermis akibat kerusakan DNA sel oleh radiasi UV matahari. Sekitar 10-20% lesi ini berpotensi bermutasi menjadi Kanker Sel Skuamosa (SCC) invasif bila tidak ditangani.",
+        "ciri_klinis": "Bercak kasar berpasir saat diraba, kering, bersisik, berwarna kemerahan atau kecokelatan, sering timbul di wajah, dahi, daun telinga, bibir, atau punggung tangan.",
+        "panduan_tindakan": "Dianjurkan konsultasi dermatologi untuk terapi ablasi preventif sebelum berkembang menjadi karsinoma invasif (krioterapi nitrogen cair, krim topikal 5-fluorouracil, atau terapi fotodinamik)."
     },
     "NV": {
         "nama_lengkap": "Melanocytic Nevus (Tahi Lalat Jinak)",
-        "definisi": "Proliferasi jinak dari sel melanosit. Merupakan kondisi sangat umum dan non-kanker yang ditemukan pada hampir setiap orang.",
-        "ciri_klinis": "Bentuk simetris bundar/oval, batas tepi tegas dan teratur, warna cokelat atau hitam merata dan homogen, permukaan rata atau sedikit menonjol.",
-        "panduan_tindakan": "Tidak memerlukan tindakan medis khusus. Cukup lakukan observasi mandiri berkala (aturan ABCDE). Periksakan jika tahi lalat membesar cepat, gatal, atau berdarah."
+        "definisi": "Proliferasi jinak dari melanosit. Merupakan tumor jinak kulit yang sangat lazim dan non-karsinogenik yang dimiliki oleh hampir setiap individu.",
+        "ciri_klinis": "Bentuk simetris melingkar atau oval, batas tepi tegas dan teratur, pigmentasi seragam (cokelat muda, cokelat tua, atau hitam merata), permukaan halus atau sedikit menonjol.",
+        "panduan_tindakan": "Kondisi jinak murni dan tidak berbahaya. Cukup lakukan pemantauan mandiri berkala (aturan ABCDE). Segera periksakan jika tahi lalat membesar cepat, berubah warna, gatal, atau berdarah spontan."
     },
     "BKL": {
         "nama_lengkap": "Benign Keratosis / Seborrheic Keratosis (Lesi Jinak)",
-        "definisi": "Pertumbuhan kulit jinak non-kanker yang sangat umum terjadi seiring bertambahnya usia, berasal dari keratinosit epidermis.",
-        "ciri_klinis": "Tampak seperti 'menempel' pada kulit (stuck-on), permukaan berlilin, kasar atau berkeropeng, dengan warna bervariasi dari cokelat muda hingga hitam pekat.",
-        "panduan_tindakan": "Kondisi sama sekali tidak berbahaya dan tidak berubah menjadi kanker. Pengangkatan (krioterapi/kuretase) hanya diperlukan jika mengalami iritasi atau alasan estetika."
+        "definisi": "Pertumbuhan tumor jinak keratinosit epidermis yang sangat umum terjadi seiring pertambahan usia dan bersifat herediter.",
+        "ciri_klinis": "Tampak seperti 'menempel' pada kulit (stuck-on appearance), permukaan berlilin, kasar atau berkeropeng, dengan warna bervariasi dari cokelat kekuningan hingga hitam pekat.",
+        "panduan_tindakan": "Kondisi sepenuhnya jinak dan tidak memiliki potensi keganasan. Pengangkatan dengan krioterapi atau kuretase hanya dilakukan jika lesi teriritasi oleh gesekan pakaian atau untuk pertimbangan estetika."
     },
     "DF": {
         "nama_lengkap": "Dermatofibroma (Lesi Jaringan Ikat Jinak)",
-        "definisi": "Proliferasi jinak fibroblas kutan pada lapisan dermis, sering kali dipicu oleh reaksi cedera minor sebelumnya (seperti gigitan serangga atau trauma tumpul kecil).",
-        "ciri_klinis": "Nodul keras kecil (0.5 - 1 cm) berwarna merah kecokelatan yang memperlihatkan tanda cekungan ke dalam saat dijepit dari samping (pinch sign positif).",
-        "panduan_tindakan": "Bersifat jinak dan stabil. Tidak memerlukan tindakan bedah kecuali jika menimbulkan keluhan nyeri atau gesekan."
+        "definisi": "Nodul kutan jinak fibrositik pada dermis yang sering terbentuk sebagai reaksi respons terhadap mikrotrauma atau gigitan serangga.",
+        "ciri_klinis": "Nodul keras padat berukuran 0.5 - 1 cm berwarna cokelat kemerahan yang memperlihatkan lekukan ke dalam saat ditekan atau dijepit dari kedua sisi (dimple sign / pinch sign positif).",
+        "panduan_tindakan": "Bersifat jinak dan tidak memerlukan penanganan khusus kecuali jika menimbulkan nyeri atau rasa mengganjal."
     },
     "VASC": {
         "nama_lengkap": "Vascular Lesion / Cherry Angioma (Lesi Pembuluh Darah)",
-        "definisi": "Proliferasi jinak pembuluh darah kapiler pada kulit, sering ditemukan pada orang dewasa dan bertambah banyak seiring pertambahan usia.",
-        "ciri_klinis": "Bintik atau papula kecil berwarna merah terang, ungu, atau merah marun, permukaannya halus, dan memudar sesaat jika ditekan (blanching).",
-        "panduan_tindakan": "Sangat jinak dan tidak memiliki potensi keganasan. Tindakan laser atau elektrokauter hanya dipertimbangkan untuk alasan kosmetik."
+        "definisi": "Proliferasi jinak endotel pembuluh darah kapiler superfisial, lazim ditemukan pada orang dewasa dan dapat bertambah seiring usia.",
+        "ciri_klinis": "Papula kecil berwarna merah cerah atau keunguan, berbatas tegas, halus, dan memudar sesaat jika ditekan (blanching).",
+        "panduan_tindakan": "Sangat jinak dan aman. Tindakan elektrokauter atau terapi laser hanya diperlukan jika mudah berdarah akibat trauma berulang atau alasan estetika."
     }
 }
-MALIGNANT_IDX = [0, 1, 4, 6]
-BENIGN_IDX = [2, 3, 5, 7]
+
+MALIGNANT_IDX = [0, 1, 4, 6]  # AKIEC, BCC, MEL, SCC
+BENIGN_IDX = [2, 3, 5, 7]     # BKL, DF, NV, VASC
 NORM_MEAN = [0.485, 0.456, 0.406]
 NORM_STD = [0.229, 0.224, 0.225]
 
@@ -377,29 +550,49 @@ class ConvNeXtTinyMHSA(nn.Module):
         tok = self.attention(tok)
         return self.classifier(self.norm(tok.mean(1) + f.mean(dim=(2, 3))))
 
-# ─── PRA-PEMROSESAN CITRA ─────────────────────────────────────────────────────
-DET, MARGIN, FRAC_MIN, FRAC_MAX = 512, 0.15, 0.03, 0.90
-
+# ─── PIPELINE PRA-PEMROSESAN CITRA ────────────────────────────────────────────
 def proses_citra(im_bgr):
     t_start = time.time()
     h, w = im_bgr.shape[:2]
-    det = cv2.resize(im_bgr, (DET, DET), interpolation=cv2.INTER_AREA)
-    abu = cv2.GaussianBlur(cv2.cvtColor(det, cv2.COLOR_BGR2GRAY), (7, 7), 0)
-    _, th = cv2.threshold(abu, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
-    lingkar = np.zeros((DET, DET), np.uint8)
-    cv2.circle(lingkar, (DET // 2, DET // 2), int(DET * 0.48), 255, -1)
-    masker = cv2.bitwise_and(th, lingkar)
-    cnts, _ = cv2.findContours(masker, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    DET = 256
+    im_det = cv2.resize(im_bgr, (DET, DET), interpolation=cv2.INTER_AREA)
+
+    # Deteksi lingkaran dermoskopi
+    gray_det = cv2.cvtColor(im_det, cv2.COLOR_BGR2GRAY)
+    _, mask_circle = cv2.threshold(gray_det, 25, 255, cv2.THRESH_BINARY)
+    cnts, _ = cv2.findContours(mask_circle, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     
+    lingkaran_ada = False
+    if cnts:
+        c_max = max(cnts, key=cv2.contourArea)
+        area = cv2.contourArea(c_max)
+        if area > 0.35 * DET * DET:
+            (cx, cy), radius = cv2.minEnclosingCircle(c_max)
+            if radius > 0.35 * DET:
+                lingkaran_ada = True
+
+    # Segmentasi Otsu
+    gray = cv2.cvtColor(im_det, cv2.COLOR_BGR2GRAY)
+    blur = cv2.GaussianBlur(gray, (5, 5), 0)
+    _, thresh = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+
+    if lingkaran_ada:
+        mask_lingkaran = np.zeros((DET, DET), dtype=np.uint8)
+        cv2.circle(mask_lingkaran, (int(cx), int(cy)), int(radius * 0.92), 255, -1)
+        thresh = cv2.bitwise_and(thresh, mask_lingkaran)
+
+    masker = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5)))
+    cnts, _ = cv2.findContours(masker, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
     crop = im_bgr
     if cnts:
         c = max(cnts, key=cv2.contourArea)
-        frac = cv2.contourArea(c) / (DET * DET)
-        if FRAC_MIN <= frac <= FRAC_MAX:
+        if cv2.contourArea(c) > 0.01 * DET * DET:
             x, y, bw, bh = cv2.boundingRect(c)
+            MARGIN = 0.15
             sisi = int(max(bw, bh) * (1 + 2 * MARGIN))
-            cx, cy = x + bw // 2, y + bh // 2
-            x0, y0 = max(0, cx - sisi // 2), max(0, cy - sisi // 2)
+            cx_box, cy_box = x + bw // 2, y + bh // 2
+            x0, y0 = max(0, cx_box - sisi // 2), max(0, cy_box - sisi // 2)
             x1, y1 = min(DET, x0 + sisi), min(DET, y0 + sisi)
             sx, sy = w / DET, h / DET
             crop_cand = im_bgr[int(y0 * sy):int(y1 * sy), int(x0 * sx):int(x1 * sx)]
@@ -438,196 +631,316 @@ def muat_model():
     net.eval()
     return net
 
-def format_lab_table(probs, top_idx):
-    order = np.argsort(probs)[::-1]
-    rows = []
-    for idx in order:
-        k = KELAS[idx]
-        nama = KELAS_NAMA[k]
-        kat = KELAS_KATEGORI[k]
-        p = float(probs[idx])
-        pct = p * 100
-        is_top = (idx == top_idx)
-        is_mal = ("Ganas" in kat)
-        
-        row_cls = " class='top-row'" if is_top else ""
-        tag_cls = "tag-ganas" if is_mal else "tag-jinak"
-        bar_color = "#DC2626" if is_mal else "#2563EB"
-        
-        row_str = (
-            f"<tr{row_cls}>"
-            f"<td>{nama}</td>"
-            f"<td><span class='{tag_cls}'>{kat}</span></td>"
-            f"<td style='text-align:right;'>{pct:.2f}%</td>"
-            f"<td style='width:28%;'><div class='bar-bg'><div class='bar-fill' style='width:{pct:.2f}%;background:{bar_color};'></div></div></td>"
-            f"</tr>"
-        )
-        rows.append(row_str)
-    
-    table_html = (
-        "<table class='lab-table'>"
-        "<thead><tr>"
-        "<th>Jenis Lesi Kulit</th>"
-        "<th>Kategori</th>"
-        "<th style='text-align:right;'>Probabilitas</th>"
-        "<th>Distribusi</th>"
-        "</tr></thead>"
-        f"<tbody>{''.join(rows)}</tbody>"
-        "</table>"
-    )
-    return table_html
-
-# ─── HEADER BERSIH ────────────────────────────────────────────────────────────
+# ─── HEADER UTAMA ─────────────────────────────────────────────────────────────
 st.markdown("""
-<div class="app-header">
-    <div class="app-header-left">
-        <span class="app-header-icon">🩺</span>
+<div class="ds-header">
+    <div class="ds-header-left">
+        <div class="ds-header-icon">🩺</div>
         <div>
-            <div class="app-header-title">DERMASPARK</div>
-            <div class="app-header-desc">Sistem Skrining & Triase Citra Lesi Kulit</div>
+            <div class="ds-header-title">DERMASPARK</div>
+            <div class="ds-header-subtitle">Sistem Skrining & Triase Citra Lesi Kulit berbasis Deep Learning</div>
         </div>
     </div>
-    <div class="app-header-badge">ConvNeXtTiny-MHSA &bull; 8 Kelas ISIC</div>
+    <div class="ds-header-badge">ConvNeXtTiny-MHSA &bull; 8 Kelas ISIC</div>
 </div>
 """, unsafe_allow_html=True)
 
-# ─── WORKSPACE DUA KOLOM TERSTRUKTUR ──────────────────────────────────────────
-col_input, col_report = st.columns([1, 1.3], gap="large")
+# ═══════════════════════════════════════════════════════════════════════════════
+# TINGKAT 1: MASUKAN CITRA & PENGATURAN KLINIS (ATAS)
+# ═══════════════════════════════════════════════════════════════════════════════
+citra_bgr = None
+label_sumber = ""
 
-with col_input:
-    with st.container(border=True):
-        st.markdown('<div class="box-title">1. Masukan Citra Dermoskopi</div>', unsafe_allow_html=True)
+with st.container(border=True):
+    st.markdown("""
+    <div class="ds-section-header">
+        <span class="ds-step-num">1</span> Masukan Citra Dermoskopi & Pengaturan
+    </div>
+    """, unsafe_allow_html=True)
 
+    col_ctrl, col_prev = st.columns([1.1, 0.9], gap="large")
+
+    with col_ctrl:
         mode = st.radio(
-            "Pilih Sumber Citra:",
-            ["Pilih dari Sampel", "Unggah Berkas Foto"],
+            "Pilih Sumber Citra Lesi:",
+            ["Pilih Sampel Klinis Terverifikasi", "Unggah Berkas Citra Baru"],
             horizontal=True
         )
 
-        citra_bgr = None
-        label_sumber = ""
-
-        if mode == "Pilih dari Sampel":
+        if mode == "Pilih Sampel Klinis Terverifikasi":
             pilihan_sampel = {
                 "Melanoma (Kanker Ganas Agresif)": "Melanoma_ISIC_0024310.jpg",
                 "Basal Cell Carcinoma (Kanker Kulit)": "BCC_ISIC_0024436.jpg",
-                "Actinic Keratosis (Pra-Kanker)": "AKIEC_ISIC_0024329.jpg",
+                "Actinic Keratosis (Lesi Pra-Kanker)": "AKIEC_ISIC_0024329.jpg",
                 "Melanocytic Nevus (Tahi Lalat Jinak)": "Nevus_ISIC_0000009.jpg",
                 "Benign Keratosis (Lesi Jinak)": "BKL_ISIC_0012173.jpg"
             }
-            terpilih = st.selectbox("Pilih Sampel Lesi:", list(pilihan_sampel.keys()))
+            terpilih = st.selectbox("Pilih Sampel Lesi Uji:", list(pilihan_sampel.keys()))
             berkas = SAMPLES_DIR / pilihan_sampel[terpilih]
             if berkas.exists():
                 citra_bgr = cv2.imread(str(berkas))
                 label_sumber = terpilih
         else:
-            file_up = st.file_uploader("Unggah foto lesi kulit (JPG / PNG):", type=["jpg", "jpeg", "png"])
+            file_up = st.file_uploader("Unggah berkas foto lesi kulit (JPG / PNG):", type=["jpg", "jpeg", "png"])
             if file_up is not None:
                 buf = np.asarray(bytearray(file_up.read()), dtype=np.uint8)
                 citra_bgr = cv2.imdecode(buf, cv2.IMREAD_COLOR)
-                label_sumber = f"File: {file_up.name}"
+                label_sumber = f"Berkas: {file_up.name}"
 
-        # Pratinjau Citra
+        with st.expander("⚙️ Ambang Batas Triase Klinis (Threshold)", expanded=False):
+            ambang = st.slider("Batas Keganasan Minimum:", 0.0, 1.0, 0.42, 0.01)
+            st.caption("Nilai ambang batas terkalibrasi optimal: **0,42**. Akumulasi probabilitas keganasan $\ge 0,42$ dikategorikan sebagai Indikasi Ganas.")
+
+    with col_prev:
         if citra_bgr is not None:
             tahap = proses_citra(citra_bgr)
-            st.image(tahap["asli_rgb"], caption=f"Pratinjau: {label_sumber}", use_container_width=True)
-
-        # Pengaturan Ambang Batas Klinis
-        with st.expander("Pengaturan Ambang Batas (Opsional)", expanded=False):
-            ambang = st.slider("Batas Ambang Keganasan:", 0.0, 1.0, 0.42, 0.01)
-            st.caption("Batas ambang standar terkalibrasi: **0,42**. Nilai peluang keganasan $\ge 0,42$ dikategorikan Ganas.")
-
-with col_report:
-    with st.container(border=True):
-        st.markdown('<div class="box-title">2. Hasil Skrining & Evaluasi</div>', unsafe_allow_html=True)
-
-        if citra_bgr is not None:
-            model = muat_model()
-            if model is not None:
-                mean_t = torch.tensor(NORM_MEAN).view(1, 3, 1, 1)
-                std_t = torch.tensor(NORM_STD).view(1, 3, 1, 1)
-                x_norm = (tahap["tensor_sog"] - mean_t) / std_t
-
-                t0 = time.time()
-                with torch.no_grad():
-                    logits = model(x_norm)
-                    probs = F.softmax(logits, dim=1)[0].numpy()
-                durasi_inf_ms = (time.time() - t0) * 1000
-
-                top_idx = int(np.argmax(probs))
-                top_nama = KELAS_NAMA[KELAS[top_idx]]
-                top_prob = float(probs[top_idx])
-
-                prob_ganas = float(sum(probs[i] for i in MALIGNANT_IDX))
-                is_ganas = prob_ganas >= ambang
-
-                # 1. STATUS BANNER KLINIS
-                if is_ganas:
-                    st.markdown(
-                        f'<div class="status-card malignant">'
-                        f'<div class="status-badge">⚠️ Terindikasi Ganas (Malignant)</div>'
-                        f'<div class="status-title">{top_nama}</div>'
-                        f'<div class="status-urgency">Tingkat Urgensi: Tinggi &bull; Rujukan Spesialis & Biopsi Jaringan</div>'
-                        f'<div class="status-desc">Akumulasi estimasi potensi keganasan tercatat sebesar <strong>{prob_ganas*100:.1f}%</strong> (melebihi ambang batas {ambang:.2f}). Disarankan untuk melakukan konsultasi klinis langsung dengan dokter spesialis dermatologi.</div>'
-                        f'</div>',
-                        unsafe_allow_html=True
-                    )
-                else:
-                    st.markdown(
-                        f'<div class="status-card benign">'
-                        f'<div class="status-badge">✓ Terindikasi Jinak (Benign)</div>'
-                        f'<div class="status-title">{top_nama}</div>'
-                        f'<div class="status-urgency">Tingkat Urgensi: Rendah &bull; Pemantauan Mandiri Rutin</div>'
-                        f'<div class="status-desc">Akumulasi estimasi potensi keganasan berada pada tingkat rendah, yaitu <strong>{prob_ganas*100:.1f}%</strong> (di bawah ambang batas {ambang:.2f}). Lesi diprediksi non-kanker. Lakukan evaluasi berkala mandiri terhadap aturan ABCDE.</div>'
-                        f'</div>',
-                        unsafe_allow_html=True
-                    )
-
-                # 2. TABEL HASIL UJI LABORATORIUM (8 KELAS)
-                st.markdown(format_lab_table(probs, top_idx), unsafe_allow_html=True)
-
-                # 3. INFORMASI KLINIS MENDALAM
-                info_med = PENJELASAN_MEDIS.get(KELAS[top_idx], {})
-                if info_med:
-                    st.markdown(
-                        f'<div class="clinical-detail-card">'
-                        f'<div class="detail-sec-title">📖 Informasi Medis: {info_med["nama_lengkap"]}</div>'
-                        f'<div class="detail-item"><span class="detail-label">Definisi:</span> {info_med["definisi"]}</div>'
-                        f'<div class="detail-item"><span class="detail-label">Ciri Dermoskopi:</span> {info_med["ciri_klinis"]}</div>'
-                        f'<div class="detail-item"><span class="detail-label">Rekomendasi Tindakan:</span> {info_med["panduan_tindakan"]}</div>'
-                        f'</div>',
-                        unsafe_allow_html=True
-                    )
-
-                # 4. METADATA FOOTER
-                total_latency = tahap["prep_ms"] + durasi_inf_ms
-                st.markdown(
-                    f'<div class="meta-footer">'
-                    f'<span>Waktu Komputasi: <strong>{total_latency:.0f} ms</strong> (Praproses {tahap["prep_ms"]:.0f}ms + Inferensi {durasi_inf_ms:.0f}ms)</span>'
-                    f'<span>Resolusi: <strong>256×256 px</strong></span>'
-                    f'<span>Model: <strong>ConvNeXtTiny-MHSA</strong></span>'
-                    f'</div>',
-                    unsafe_allow_html=True
-                )
+            st.markdown('<div class="ds-image-frame">', unsafe_allow_html=True)
+            st.image(tahap["asli_rgb"], use_container_width=True)
+            st.markdown(f'<div class="ds-image-caption">Pratinjau: <strong>{label_sumber}</strong> (256×256 px)</div></div>', unsafe_allow_html=True)
         else:
-            st.info("Pilih sampel lesi kulit di sebelah kiri atau unggah berkas foto untuk melihat hasil skrining.")
+            st.markdown("""
+            <div class="ds-image-frame" style="padding: 3.5rem 1rem; color: #94A3B8;">
+                <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">📷</div>
+                <div style="font-size: 0.88rem; font-weight: 600;">Belum ada citra yang dipilih</div>
+                <div style="font-size: 0.78rem;">Pilih sampel klinis atau unggah berkas foto</div>
+            </div>
+            """, unsafe_allow_html=True)
 
-# ─── ACCORDION TAHAPAN PRA-PEMROSESAN (TIDAK MEMBEBANI HALAMAN) ───────────────
+# ═══════════════════════════════════════════════════════════════════════════════
+# INFERENSI MODEL & EVALUASI
+# ═══════════════════════════════════════════════════════════════════════════════
 if citra_bgr is not None:
-    with st.expander("🔬 Lihat Alur Pra-pemrosesan Citra (4 Tahap)", expanded=False):
-        c1, c2, c3, c4 = st.columns(4)
-        with c1:
-            st.image(tahap["asli_rgb"], caption="1. Citra Asli (256×256)", use_container_width=True)
-        with c2:
-            st.image(tahap["masker_rgb"], caption="2. Masker Lingkaran & Otsu", use_container_width=True)
-        with c3:
-            st.image(tahap["roi_rgb"], caption="3. Segmentasi ROI (+15%)", use_container_width=True)
-        with c4:
-            st.image(tahap["sog_rgb"], caption="4. Normalisasi Warna (p=6)", use_container_width=True)
+    model = muat_model()
+    if model is not None:
+        mean_t = torch.tensor(NORM_MEAN).view(1, 3, 1, 1)
+        std_t = torch.tensor(NORM_STD).view(1, 3, 1, 1)
+        x_norm = (tahap["tensor_sog"] - mean_t) / std_t
+
+        t0 = time.time()
+        with torch.no_grad():
+            logits = model(x_norm)
+            probs = F.softmax(logits, dim=1)[0].numpy()
+        durasi_inf_ms = (time.time() - t0) * 1000
+
+        top_idx = int(np.argmax(probs))
+        top_k = KELAS[top_idx]
+        top_nama = KELAS_NAMA[top_k]
+        top_prob = float(probs[top_idx])
+        top_kat = KELAS_KATEGORI[top_k]
+
+        prob_ganas = float(sum(probs[i] for i in MALIGNANT_IDX))
+        prob_jinak = float(sum(probs[i] for i in BENIGN_IDX))
+        is_ganas = prob_ganas >= ambang
+
+        total_latensi = tahap["prep_ms"] + durasi_inf_ms
+
+        # ═══════════════════════════════════════════════════════════════════════
+        # TINGKAT 2: HASIL DIAGNOSIS & INDIKATOR RISIKO UTAMA (TENGAH)
+        # ═══════════════════════════════════════════════════════════════════════
+        with st.container(border=True):
+            st.markdown("""
+            <div class="ds-section-header">
+                <span class="ds-step-num">2</span> Hasil Diagnosis & Indikator Risiko Triase
+            </div>
+            """, unsafe_allow_html=True)
+
+            # Kartu Status Diagnosis
+            if is_ganas:
+                card_class = "malignant"
+                badge_text = "⚠️ Indikasi Risiko Tinggi (Ganas)"
+                badge_class = "malignant"
+                urgency_text = "Tingkat Urgensi: Tinggi &bull; Rujukan Spesialis Dermatologi & Evaluasi Biopsi Jaringan"
+                urgency_class = "malignant"
+                tag_bg = "#FEE2E2"
+                tag_color = "#991B1B"
+                tag_text = "Ganas / Pra-Kanker"
+            else:
+                card_class = "benign"
+                badge_text = "✓ Indikasi Risiko Rendah (Jinak)"
+                badge_class = "benign"
+                urgency_text = "Tingkat Urgensi: Rendah &bull; Pemantauan Mandiri Rutin (Aturan ABCDE)"
+                urgency_class = "benign"
+                tag_bg = "#DCFCE7"
+                tag_color = "#166534"
+                tag_text = "Non-Kanker (Jinak)"
+
+            # Visual Risk Meter
+            pct_ganas = prob_ganas * 100
+            meter_fill_color = "#E11D48" if is_ganas else "#10B981"
+            meter_stat_color = "#BE123C" if is_ganas else "#15803D"
+
+            if is_ganas:
+                meter_desc = f"Akumulasi potensi keganasan tercatat sebesar <strong>{pct_ganas:.2f}%</strong>, melampaui batas ambang klinis ({ambang * 100:.1f}%). Sistem mendeteksi profil lesi berisiko tinggi. Diperlukan konfirmasi pemeriksaan histopatologi definitif."
+            else:
+                meter_desc = f"Akumulasi potensi keganasan berada pada tingkat rendah, yaitu <strong>{pct_ganas:.2f}%</strong> (di bawah batas ambang {ambang * 100:.1f}%). Lesi diklasifikasikan sebagai non-kanker/jinak. Tetap lakukan observasi mandiri berkala."
+
+            st.markdown(f"""
+            <div class="ds-diagnosis-card {card_class}">
+                <div style="flex: 1; min-width: 260px;">
+                    <span class="ds-diag-badge {badge_class}">{badge_text}</span>
+                    <div class="ds-diag-title">{top_nama}</div>
+                    <div class="ds-diag-urgency {urgency_class}">{urgency_text}</div>
+                </div>
+                <div class="ds-score-box">
+                    <div class="ds-score-label">Keyakinan Model</div>
+                    <div class="ds-score-value">{top_prob * 100:.2f}%</div>
+                    <span class="ds-score-tag" style="background:{tag_bg}; color:{tag_color};">{tag_text}</span>
+                </div>
+            </div>
+
+            <div class="ds-risk-meter-container">
+                <div class="ds-meter-header">
+                    <span class="ds-meter-title">Meter Estimasi Potensi Keganasan (Cancer Risk Meter)</span>
+                    <span class="ds-meter-stat" style="color: {meter_stat_color};">
+                        {pct_ganas:.2f}% {"(RISIKO TINGGI)" if is_ganas else "(RISIKO RENDAH)"}
+                    </span>
+                </div>
+                <div class="ds-meter-track">
+                    <div class="ds-meter-zone-safe"></div>
+                    <div class="ds-meter-zone-alert"></div>
+                    <div class="ds-meter-fill" style="width: {min(100.0, pct_ganas):.2f}%; background: {meter_fill_color}; opacity: 0.88;"></div>
+                </div>
+                <div class="ds-meter-labels">
+                    <span>0% (Zona Aman / Jinak)</span>
+                    <span style="color: #475569; font-weight: 700;">| Ambang Batas Triase: {ambang * 100:.1f}%</span>
+                    <span>100% (Zona Keganasan Tinggi)</span>
+                </div>
+                <div class="ds-meter-explanation">{meter_desc}</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        # ═══════════════════════════════════════════════════════════════════════
+        # TINGKAT 3: DISTRIBUSI PROBABILITAS & PANDUAN KLINIS (BAWAH)
+        # ═══════════════════════════════════════════════════════════════════════
+        with st.container(border=True):
+            st.markdown("""
+            <div class="ds-section-header">
+                <span class="ds-step-num">3</span> Distribusi Probabilitas & Panduan Evaluasi Klinis
+            </div>
+            """, unsafe_allow_html=True)
+
+            col_dist, col_guide = st.columns([1, 1], gap="large")
+
+            with col_dist:
+                st.markdown('<div class="ds-clinical-heading">📊 Distribusi Probabilitas Model (Top-3)</div>', unsafe_allow_html=True)
+                
+                order = np.argsort(probs)[::-1]
+                for i, idx in enumerate(order[:3]):
+                    k = KELAS[idx]
+                    nama = KELAS_NAMA[k]
+                    kat = KELAS_KATEGORI[k]
+                    p = float(probs[idx])
+                    pct = p * 100
+                    is_top1 = (i == 0)
+                    card_cls = "ds-dist-card top1" if is_top1 else "ds-dist-card"
+                    badge_cls = "badge-ganas" if "Ganas" in kat else "badge-jinak"
+
+                    st.markdown(f"""
+                    <div class="{card_cls}">
+                        <div>
+                            <div class="ds-dist-name">{i+1}. {nama}</div>
+                            <span class="{badge_cls}">{kat}</span>
+                        </div>
+                        <div class="ds-dist-meta">
+                            <div class="ds-dist-pct">{pct:.2f}%</div>
+                        </div>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+                with st.expander("Lihat Rincian Lengkap Seluruh 8 Kelas ISIC", expanded=False):
+                    rows_html = []
+                    for idx in order:
+                        k = KELAS[idx]
+                        nama = KELAS_NAMA[k]
+                        kat = KELAS_KATEGORI[k]
+                        pct = float(probs[idx]) * 100
+                        b_cls = "badge-ganas" if "Ganas" in kat else "badge-jinak"
+                        rows_html.append(
+                            f"<tr>"
+                            f"<td style='padding:0.45rem 0.6rem; border-bottom:1px solid #F1F5F9; font-size:0.80rem;'>{nama}</td>"
+                            f"<td style='padding:0.45rem 0.6rem; border-bottom:1px solid #F1F5F9;'><span class='{b_cls}'>{kat}</span></td>"
+                            f"<td style='padding:0.45rem 0.6rem; border-bottom:1px solid #F1F5F9; text-align:right; font-weight:700; font-size:0.80rem;'>{pct:.2f}%</td>"
+                            f"</tr>"
+                        )
+                    st.markdown(f"""
+                    <table style="width:100%; border-collapse:collapse; margin-top:0.5rem;">
+                        <thead>
+                            <tr style="background:#F8FAFC; border-bottom:1px solid #E2E8F0; font-size:0.75rem; color:#64748B;">
+                                <th style="padding:0.4rem 0.6rem; text-align:left;">Kelas Lesi</th>
+                                <th style="padding:0.4rem 0.6rem; text-align:left;">Kategori</th>
+                                <th style="padding:0.4rem 0.6rem; text-align:right;">Peluang</th>
+                            </tr>
+                        </thead>
+                        <tbody>{''.join(rows_html)}</tbody>
+                    </table>
+                    """, unsafe_allow_html=True)
+
+                st.caption(f"⚡ **Waktu Komputasi Total: {total_latensi:.0f} ms** (Praproses {tahap['prep_ms']:.0f}ms + Inferensi {durasi_inf_ms:.0f}ms) &bull; Resolusi 256×256 px")
+
+            with col_guide:
+                info_med = PENJELASAN_MEDIS.get(top_k, {})
+                if info_med:
+                    st.markdown(f"""
+                    <div class="ds-clinical-block">
+                        <div class="ds-clinical-heading">📖 Informasi Patologi: {info_med['nama_lengkap']}</div>
+                        <div class="ds-clinical-p"><span class="ds-clinical-label">Definisi:</span> {info_med['definisi']}</div>
+                        <div class="ds-clinical-p"><span class="ds-clinical-label">Karakteristik Dermoskopi:</span> {info_med['ciri_klinis']}</div>
+                        <div class="ds-clinical-p"><span class="ds-clinical-label">Rekomendasi Tindakan:</span> {info_med['panduan_tindakan']}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+                st.markdown("""
+                <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:10px; padding:0.85rem;">
+                    <div style="font-size:0.82rem; font-weight:700; color:#1E293B; margin-bottom:0.25rem;">
+                        🩺 Panduan Pemeriksaan Mandiri (Aturan ABCDE)
+                    </div>
+                    <div class="ds-abcde-grid">
+                        <div class="ds-abcde-item">
+                            <div class="ds-abcde-letter">A</div>
+                            <div class="ds-abcde-title">Asymmetry</div>
+                            <div class="ds-abcde-desc">Bentuk sisi tidak simetris</div>
+                        </div>
+                        <div class="ds-abcde-item">
+                            <div class="ds-abcde-letter">B</div>
+                            <div class="ds-abcde-title">Border</div>
+                            <div class="ds-abcde-desc">Tepi tidak rata / berlekuk</div>
+                        </div>
+                        <div class="ds-abcde-item">
+                            <div class="ds-abcde-letter">C</div>
+                            <div class="ds-abcde-title">Color</div>
+                            <div class="ds-abcde-desc">Variasi >1 corak warna</div>
+                        </div>
+                        <div class="ds-abcde-item">
+                            <div class="ds-abcde-letter">D</div>
+                            <div class="ds-abcde-title">Diameter</div>
+                            <div class="ds-abcde-desc">Ukuran lesi > 6 milimeter</div>
+                        </div>
+                        <div class="ds-abcde-item">
+                            <div class="ds-abcde-letter">E</div>
+                            <div class="ds-abcde-title">Evolution</div>
+                            <div class="ds-abcde-desc">Perubahan bentuk / rasa</div>
+                        </div>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+
+        # ═══════════════════════════════════════════════════════════════════════
+        # PRA-PEMROSESAN CITRA (ACCORDION TRANSPARAN & TIDAK MEMBEBANI)
+        # ═══════════════════════════════════════════════════════════════════════
+        with st.expander("🔬 Lihat Alur Pra-pemrosesan Citra Digital (ROI Otsu & Shades of Gray, p=6)", expanded=False):
+            cp1, cp2, cp3, cp4 = st.columns(4)
+            with cp1:
+                st.image(tahap["asli_rgb"], caption="1. Citra Asli Dermoskopi", use_container_width=True)
+            with cp2:
+                st.image(tahap["masker_rgb"], caption="2. Masker Lingkaran & Otsu", use_container_width=True)
+            with cp3:
+                st.image(tahap["roi_rgb"], caption="3. Segmentasi ROI (+15%)", use_container_width=True)
+            with cp4:
+                st.image(tahap["sog_rgb"], caption="4. Normalisasi Warna (p=6)", use_container_width=True)
 
 # ─── FOOTER SEDERHANA ─────────────────────────────────────────────────────────
 st.markdown("""
-<div class="app-footer">
-    DERMASPARK &bull; Sistem Skrining Citra Lesi Kulit
+<div class="ds-footer">
+    DERMASPARK &bull; Sistem Skrining & Triase Citra Lesi Kulit berbasis Deep Learning
 </div>
 """, unsafe_allow_html=True)

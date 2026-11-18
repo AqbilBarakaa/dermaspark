@@ -208,6 +208,34 @@ st.markdown("""
         padding: 0.65rem 0.95rem;
         font-size: 0.78rem;
         color: #64748B;
+        margin-top: 0.75rem;
+    }
+
+    /* Detail Informasi Klinis Lengkap */
+    .clinical-detail-card {
+        background: #F8FAFC;
+        border: 1px solid #E2E8F0;
+        border-radius: 8px;
+        padding: 0.95rem 1.1rem;
+        margin-top: 1.0rem;
+    }
+    .detail-sec-title {
+        font-size: 0.88rem;
+        font-weight: 700;
+        color: #1E293B;
+        margin-bottom: 0.55rem;
+        border-bottom: 1px solid #E2E8F0;
+        padding-bottom: 0.35rem;
+    }
+    .detail-item {
+        font-size: 0.82rem;
+        color: #334155;
+        line-height: 1.55;
+        margin-bottom: 0.45rem;
+    }
+    .detail-label {
+        font-weight: 700;
+        color: #0F172A;
     }
 
     /* Footer Sederhana */
@@ -241,7 +269,7 @@ KELAS_NAMA = {
     "VASC": "Vascular Lesion (Lesi Pembuluh Darah)"
 }
 KELAS_KATEGORI = {
-    "AKIEC": "Ganas / Pra-Kanker",
+    "AKIEC": "Ganas",
     "BCC": "Ganas",
     "BKL": "Jinak",
     "DF": "Jinak",
@@ -249,6 +277,57 @@ KELAS_KATEGORI = {
     "NV": "Jinak",
     "SCC": "Ganas",
     "VASC": "Jinak"
+}
+
+PENJELASAN_MEDIS = {
+    "MEL": {
+        "nama_lengkap": "Melanoma Maligna (Kanker Kulit Ganas)",
+        "definisi": "Kanker kulit paling agresif dan berbahaya yang berkembang dari sel melanosit (penghasil pigmen). Memiliki potensi metastasis (penyebaran) cepat ke kelenjar getah bening dan organ tubuh lain jika tidak ditangani sejak dini.",
+        "ciri_klinis": "Asimetris, batas tepi tidak beraturan/bergerigi, warna bervariasi (hitam, cokelat, kebiruan), diameter sering >6 mm, dan mengalami perubahan bentuk/ukuran (kriteria ABCDE).",
+        "panduan_tindakan": "Segera lakukan rujukan ke dokter spesialis dermatologi untuk pemeriksaan dermoskopi digital lanjutan, biopsi eksisi diagnostik, dan penentuan ketebalan Breslow."
+    },
+    "BCC": {
+        "nama_lengkap": "Basal Cell Carcinoma (Kanker Sel Basal)",
+        "definisi": "Jenis kanker kulit non-melanoma paling sering ditemukan di dunia. Tumbuh lambat dari lapisan basal epidermis akibat akumulasi radiasi ultraviolet (UV) jangka panjang.",
+        "ciri_klinis": "Benjolan mengkilap (pearly papule), pelebaran pembuluh darah halus (telangiektasia), tepi menggulung, dan lesi luka/borok kecil yang mudah berdarah atau sulit sembuh.",
+        "panduan_tindakan": "Jarang bermetastasis ke organ jauh namun bersifat destruktif lokal terhadap jaringan sekitarnya. Disarankan konsultasi untuk tindakan eksisi bedah, bedah Mohs, atau kuretase."
+    },
+    "SCC": {
+        "nama_lengkap": "Squamous Cell Carcinoma (Kanker Sel Skuamosa)",
+        "definisi": "Kanker kulit ganas kedua paling umum, berasal dari keratinosit lapisan epidermis. Berkembang akibat paparan sinar matahari kronis atau lesi pra-kanker sebelumnya.",
+        "ciri_klinis": "Plak kemerahan menebal bersisik, nodul keras yang mudah berdarah, atau luka berkeropeng tebal yang menetap di area terpapar matahari.",
+        "panduan_tindakan": "Memiliki risiko penyebaran sekitar 2-5% ke kelenjar getah bening. Disarankan pemeriksaan histopatologi melalui biopsi serta tindakan eksisi bedah definitif."
+    },
+    "AKIEC": {
+        "nama_lengkap": "Actinic Keratosis / Bowen's Disease (Lesi Pra-Kanker)",
+        "definisi": "Lesi pra-kanker (pre-malignant) pada lapisan epidermis akibat kerusakan DNA oleh sinar UV kronis. Sekitar 10-20% lesi ini berpotensi bertransformasi menjadi Kanker Sel Skuamosa (SCC) invasif bila tidak ditangani.",
+        "ciri_klinis": "Bercak kasar berpasir, kering, bersisik, berwarna kemerahan atau kecokelatan, sering muncul di wajah, daun telinga, bibir, atau punggung tangan.",
+        "panduan_tindakan": "Dianjurkan konsultasi dermatologi untuk terapi pencegahan sebelum berkembang menjadi kanker invasif (krioterapi nitrogen cair, krim topikal, atau fotodinamik)."
+    },
+    "NV": {
+        "nama_lengkap": "Melanocytic Nevus (Tahi Lalat Jinak)",
+        "definisi": "Proliferasi jinak dari sel melanosit. Merupakan kondisi sangat umum dan non-kanker yang ditemukan pada hampir setiap orang.",
+        "ciri_klinis": "Bentuk simetris bundar/oval, batas tepi tegas dan teratur, warna cokelat atau hitam merata dan homogen, permukaan rata atau sedikit menonjol.",
+        "panduan_tindakan": "Tidak memerlukan tindakan medis khusus. Cukup lakukan observasi mandiri berkala (aturan ABCDE). Periksakan jika tahi lalat membesar cepat, gatal, atau berdarah."
+    },
+    "BKL": {
+        "nama_lengkap": "Benign Keratosis / Seborrheic Keratosis (Lesi Jinak)",
+        "definisi": "Pertumbuhan kulit jinak non-kanker yang sangat umum terjadi seiring bertambahnya usia, berasal dari keratinosit epidermis.",
+        "ciri_klinis": "Tampak seperti 'menempel' pada kulit (stuck-on), permukaan berlilin, kasar atau berkeropeng, dengan warna bervariasi dari cokelat muda hingga hitam pekat.",
+        "panduan_tindakan": "Kondisi sama sekali tidak berbahaya dan tidak berubah menjadi kanker. Pengangkatan (krioterapi/kuretase) hanya diperlukan jika mengalami iritasi atau alasan estetika."
+    },
+    "DF": {
+        "nama_lengkap": "Dermatofibroma (Lesi Jaringan Ikat Jinak)",
+        "definisi": "Proliferasi jinak fibroblas kutan pada lapisan dermis, sering kali dipicu oleh reaksi cedera minor sebelumnya (seperti gigitan serangga atau trauma tumpul kecil).",
+        "ciri_klinis": "Nodul keras kecil (0.5 - 1 cm) berwarna merah kecokelatan yang memperlihatkan tanda cekungan ke dalam saat dijepit dari samping (pinch sign positif).",
+        "panduan_tindakan": "Bersifat jinak dan stabil. Tidak memerlukan tindakan bedah kecuali jika menimbulkan keluhan nyeri atau gesekan."
+    },
+    "VASC": {
+        "nama_lengkap": "Vascular Lesion / Cherry Angioma (Lesi Pembuluh Darah)",
+        "definisi": "Proliferasi jinak pembuluh darah kapiler pada kulit, sering ditemukan pada orang dewasa dan bertambah banyak seiring pertambahan usia.",
+        "ciri_klinis": "Bintik atau papula kecil berwarna merah terang, ungu, atau merah marun, permukaannya halus, dan memudar sesaat jika ditekan (blanching).",
+        "panduan_tindakan": "Sangat jinak dan tidak memiliki potensi keganasan. Tindakan laser atau elektrokauter hanya dipertimbangkan untuk alasan kosmetik."
+    }
 }
 MALIGNANT_IDX = [0, 1, 4, 6]
 BENIGN_IDX = [2, 3, 5, 7]
@@ -430,7 +509,7 @@ with col_input:
 
         if mode == "Pilih dari Sampel":
             pilihan_sampel = {
-                "Melanoma (Kanker Ganas Agresif)": "Melanoma_ISIC_0000054.jpg",
+                "Melanoma (Kanker Ganas Agresif)": "Melanoma_ISIC_0024310.jpg",
                 "Basal Cell Carcinoma (Kanker Kulit)": "BCC_ISIC_0024436.jpg",
                 "Actinic Keratosis (Pra-Kanker)": "AKIEC_ISIC_0024329.jpg",
                 "Melanocytic Nevus (Tahi Lalat Jinak)": "Nevus_ISIC_0000009.jpg",
@@ -507,7 +586,20 @@ with col_report:
                 # 2. TABEL HASIL UJI LABORATORIUM (8 KELAS)
                 st.markdown(format_lab_table(probs, top_idx), unsafe_allow_html=True)
 
-                # 3. METADATA FOOTER
+                # 3. INFORMASI KLINIS MENDALAM
+                info_med = PENJELASAN_MEDIS.get(KELAS[top_idx], {})
+                if info_med:
+                    st.markdown(
+                        f'<div class="clinical-detail-card">'
+                        f'<div class="detail-sec-title">📖 Informasi Medis: {info_med["nama_lengkap"]}</div>'
+                        f'<div class="detail-item"><span class="detail-label">Definisi:</span> {info_med["definisi"]}</div>'
+                        f'<div class="detail-item"><span class="detail-label">Ciri Dermoskopi:</span> {info_med["ciri_klinis"]}</div>'
+                        f'<div class="detail-item"><span class="detail-label">Rekomendasi Tindakan:</span> {info_med["panduan_tindakan"]}</div>'
+                        f'</div>',
+                        unsafe_allow_html=True
+                    )
+
+                # 4. METADATA FOOTER
                 total_latency = tahap["prep_ms"] + durasi_inf_ms
                 st.markdown(
                     f'<div class="meta-footer">'

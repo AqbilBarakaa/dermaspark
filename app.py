@@ -484,6 +484,21 @@ html, body, [class*="css"] {
     color: #1E40AF;
 }
 
+/* Disclaimer Medis Klinis */
+.ds-disclaimer-card {
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 0.70rem 0.95rem;
+    font-size: 0.75rem;
+    color: #475569;
+    line-height: 1.5;
+    margin-top: 1.0rem;
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
 /* Footer Aplikasi */
 .ds-footer {
     text-align: center;
@@ -624,6 +639,48 @@ class ConvNeXtTinyMHSA(nn.Module):
         tok = self.attention(tok)
         return self.classifier(self.norm(tok.mean(1) + f.mean(dim=(2, 3))))
 
+# ─── HITUNG GRAD-CAM (VISUAL EXPLAINABILITY) ──────────────────────────────────
+def hitung_gradcam(model, x_norm, top_idx, im_roi_rgb):
+    gradients = []
+    activations = []
+
+    def hook_act(module, input, output):
+        activations.append(output)
+
+    def hook_grad(module, grad_input, grad_output):
+        gradients.append(grad_output[0])
+
+    handle_act = model.features.register_forward_hook(hook_act)
+    handle_grad = model.features.register_full_backward_hook(hook_grad)
+
+    x_clone = x_norm.clone().detach().requires_grad_(True)
+    logits = model(x_clone)
+
+    model.zero_grad()
+    loss = logits[0, top_idx]
+    loss.backward()
+
+    handle_act.remove()
+    handle_grad.remove()
+
+    if not activations or not gradients:
+        return None, None
+
+    act = activations[0].detach()
+    grad = gradients[0].detach()
+    weights = torch.mean(grad, dim=(2, 3), keepdim=True)
+    cam = torch.sum(weights * act, dim=1).squeeze(0)
+    cam = F.relu(cam)
+    cam = cam - cam.min()
+    cam = cam / (cam.max() + 1e-8)
+    cam_np = cam.cpu().numpy()
+
+    cam_resized = cv2.resize((cam_np * 255).astype(np.uint8), (IMAGE_SIZE, IMAGE_SIZE))
+    heatmap = cv2.applyColorMap(cam_resized, cv2.COLORMAP_JET)
+    heatmap_rgb = cv2.cvtColor(heatmap, cv2.COLOR_BGR2RGB)
+    overlay = cv2.addWeighted(im_roi_rgb, 0.65, heatmap_rgb, 0.35, 0)
+    return heatmap_rgb, overlay
+
 # ─── PIPELINE PRA-PEMROSESAN CITRA ────────────────────────────────────────────
 def proses_citra(im_bgr):
     t_start = time.time()
@@ -694,6 +751,18 @@ def proses_citra(im_bgr):
 
     e_vec = [float(e[0, 0, 0, 0]), float(e[0, 1, 0, 0]), float(e[0, 2, 0, 0])]
 
+    # Kualitas Citra Input (Pre-flight Check)
+    laplacian_var = float(cv2.Laplacian(gray_det, cv2.CV_64F).var())
+    contrast_std = float(gray_det.std())
+    lulus_kualitas = (laplacian_var >= 35.0) and (contrast_std >= 12.0)
+    pesan_kualitas = "Kualitas Citra Memenuhi Standar Dermoskopi (Fokus & Kontras Optimal)" if lulus_kualitas else "Peringatan: Potensi Citra Kurang Fokus / Kontras Rendah"
+    kualitas_dict = {
+        "lulus": lulus_kualitas,
+        "pesan": pesan_kualitas,
+        "skor_fokus": laplacian_var,
+        "skor_kontras": contrast_std
+    }
+
     return {
         "asli_rgb": cv2.cvtColor(cv2.resize(im_bgr, (IMAGE_SIZE, IMAGE_SIZE)), cv2.COLOR_BGR2RGB),
         "orig_w": w,
@@ -708,7 +777,8 @@ def proses_citra(im_bgr):
         "radius_val": radius_val,
         "roi_box": roi_box,
         "noise_reduced_pct": noise_reduced_pct,
-        "e_vec": e_vec
+        "e_vec": e_vec,
+        "kualitas": kualitas_dict
     }
 
 # ─── PEMUATAN MODEL ───────────────────────────────────────────────────────────
@@ -789,7 +859,22 @@ with st.container(border=True):
             tahap = proses_citra(citra_bgr)
             st.markdown('<div class="ds-image-frame">', unsafe_allow_html=True)
             st.image(tahap["asli_rgb"], use_container_width=True)
-            st.markdown(f'<div class="ds-image-caption">Pratinjau: <strong>{label_sumber}</strong> ({tahap["orig_w"]}×{tahap["orig_h"]} px)</div></div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="ds-image-caption">Pratinjau: <strong>{label_sumber}</strong> ({tahap["orig_w"]}×{tahap["orig_h"]} px)</div>', unsafe_allow_html=True)
+            
+            # Pra-pemeriksaan Kualitas Citra (Pre-flight Quality Check)
+            q = tahap["kualitas"]
+            q_bg = "#ECFDF5" if q["lulus"] else "#FFFBEB"
+            q_border = "#A7F3D0" if q["lulus"] else "#FDE68A"
+            q_color = "#065F46" if q["lulus"] else "#92400E"
+            q_icon = "✓" if q["lulus"] else "⚠️"
+            
+            st.markdown(f"""
+            <div style="background:{q_bg}; border:1px solid {q_border}; border-radius:6px; padding:0.40rem 0.65rem; margin-top:0.50rem; font-size:0.73rem; color:{q_color}; font-weight:600; display:flex; align-items:center; gap:0.45rem;">
+                <span>{q_icon}</span>
+                <span>{q["pesan"]} (Skor Fokus: {q['skor_fokus']:.1f})</span>
+            </div>
+            </div>
+            """, unsafe_allow_html=True)
         else:
             st.markdown("""
             <div class="ds-image-frame" style="padding: 3.5rem 1rem; color: #94A3B8;">
@@ -826,6 +911,9 @@ if citra_bgr is not None:
         is_ganas = prob_ganas >= ambang
 
         total_latensi = tahap["prep_ms"] + durasi_inf_ms
+
+        # Hitung Grad-CAM Visual Explainability
+        cam_heatmap_rgb, cam_overlay_rgb = hitung_gradcam(model, x_norm, top_idx, tahap["roi_rgb"])
 
         # ═══════════════════════════════════════════════════════════════════════
         # TINGKAT 2: HASIL DIAGNOSIS & INDIKATOR RISIKO UTAMA (TENGAH)
@@ -899,6 +987,30 @@ if citra_bgr is not None:
                     <span>100% (Zona Keganasan Tinggi)</span>
                 </div>
                 <div class="ds-meter-explanation">{meter_desc}</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            # Grad-CAM Visual Explainability (Visual Saliency Map)
+            if cam_overlay_rgb is not None:
+                with st.expander("👁️ Peta Perhatian Visual Model (Grad-CAM Explainability)", expanded=False):
+                    st.markdown('<div style="font-size:0.84rem; font-weight:700; color:#1E293B; margin-bottom:0.6rem;">Visualisasi Area Aktivasi Fitur Konvolusional & Attention (ConvNeXtTiny-MHSA)</div>', unsafe_allow_html=True)
+                    g1, g2, g3 = st.columns(3)
+                    with g1:
+                        st.image(tahap["roi_rgb"], caption="1. Citra Masukan Lesi (ROI)", use_container_width=True)
+                    with g2:
+                        st.image(cam_heatmap_rgb, caption="2. Heatmap Aktivasi Grad-CAM", use_container_width=True)
+                    with g3:
+                        st.image(cam_overlay_rgb, caption="3. Tumpang Tindih (Overlay Heatmap)", use_container_width=True)
+                    st.caption(f"Area berspektrum merah/hangat menandai pola dermoskopi spesifik pada lesi yang paling dominan memicu model mengklasifikasikannya sebagai **{top_nama}**.")
+
+            # Catatan Disclaimer Klinis
+            st.markdown("""
+            <div class="ds-disclaimer-card">
+                <div style="font-size: 1.15rem;">⚕️</div>
+                <div>
+                    <strong>Instrumen Penunjang Keputusan Klinis (Clinical Decision Support):</strong>
+                    Sistem triase ini dirancang sebagai alat bantu penapisan awal berbasis kecerdasan buatan. Hasil skrining bukan diagnosis medis final dan tidak menggantikan pemeriksaan histopatologi / biopsi jaringan definitif oleh dokter spesialis dermatologi.
+                </div>
             </div>
             """, unsafe_allow_html=True)
 

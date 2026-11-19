@@ -18,7 +18,7 @@ from torchvision import models
 # ─── KONFIGURASI HALAMAN ──────────────────────────────────────────────────────
 st.set_page_config(
     page_title="DERMASPARK - Sistem Skrining Citra Lesi Kulit",
-    page_icon="🩺",
+    page_icon="🔬",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -808,7 +808,14 @@ def muat_model():
 st.markdown("""
 <div class="ds-header">
     <div class="ds-header-left">
-        <div class="ds-header-icon">🩺</div>
+        <div class="ds-header-icon" title="Dermatoskopi Optik">
+            <svg width="25" height="25" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="10.5" cy="10.5" r="7" stroke="#0284C7" stroke-width="2"/>
+                <path d="M10.5 5.5V7.5M10.5 13.5V15.5M5.5 10.5H7.5M13.5 10.5H15.5" stroke="#0284C7" stroke-width="1.5" stroke-linecap="round"/>
+                <circle cx="10.5" cy="10.5" r="2.2" fill="#0284C7"/>
+                <path d="M15.5 15.5L20.5 20.5" stroke="#0284C7" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+        </div>
         <div>
             <div class="ds-header-title">DERMASPARK</div>
             <div class="ds-header-subtitle">Sistem Skrining & Triase Citra Lesi Kulit berbasis Deep Learning</div>

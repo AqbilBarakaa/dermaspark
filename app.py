@@ -861,8 +861,8 @@ with st.container(border=True):
             with col_sl:
                 ambang = st.slider(
                     "Batas Keganasan Minimum:",
-                    min_value=0.10,
-                    max_value=0.90,
+                    min_value=0.01,
+                    max_value=0.99,
                     step=0.01,
                     key="ambang_keganasan",
                     help="Ambang batas probabilitas keganasan untuk memicu alarm rujukan spesialis."
@@ -872,10 +872,18 @@ with st.container(border=True):
                 st.button(
                     "Reset (0.42)",
                     on_click=reset_ambang_callback,
-                    help="Kembalikan ke ambang batas optimal terkalibrasi (0.42)"
+                    help="Kembalikan ke ambang batas optimal terkalibrasi riset (0.42)"
                 )
 
-            st.caption("Nilai ambang batas optimal terkalibrasi: **0,42**. Akumulasi probabilitas keganasan $\ge 0,42$ memicu alarm rujukan triase.")
+            # Indikator Mode Operasional Triase
+            if ambang <= 0.30:
+                mode_label = "🎯 Mode Sensitivitas Tinggi (Skrining Ketat — Minimalkan Lolos Kanker)"
+            elif ambang <= 0.55:
+                mode_label = "⚖️ Mode Optimal Terkalibrasi Riset (0,42 — Keseimbangan F1-Score)"
+            else:
+                mode_label = "🛡️ Mode Spesifisitas Tinggi (Konservatif — Minimalkan Alarm Palsu)"
+
+            st.caption(f"**{mode_label}**<br>Ambang rujukan aktif: **{ambang:.2f}** ({ambang*100:.0f}%). Jika akumulasi keganasan $\ge {ambang:.2f}$, sistem akan memicu alarm rujukan triase.", unsafe_allow_html=True)
 
     with col_prev:
         if citra_bgr is not None:
@@ -968,24 +976,24 @@ if citra_bgr is not None:
                 tag_bg = "#DCFCE7"
                 tag_color = "#166534"
 
-            # 2. Status Alarm Triase & Tingkat Urgensi
-            if is_top_malignant:
+            # 2. Status Keputusan Triase Rujukan (Dinamis merespons Ambang Batas Slider)
+            if exceeds_threshold:
                 card_class = "malignant"
-                badge_text = "⚠️ Indikasi Lesi Kanker / Pra-Kanker Terdeteksi"
+                badge_text = f"🚨 TRIASE: MEMICU ALARM RUJUKAN ({pct_ganas:.1f}% ≥ {ambang*100:.1f}%)"
                 badge_class = "malignant"
                 urgency_text = "Tingkat Urgensi: Tinggi &bull; Rujukan Spesialis Dermatologi & Evaluasi Biopsi Jaringan"
                 urgency_class = "malignant"
-            elif exceeds_threshold:
-                card_class = "malignant"
-                badge_text = f"⚠️ Waspada: Akumulasi Keganasan Melebihi Ambang Triase ({ambang*100:.1f}%)"
-                badge_class = "malignant"
-                urgency_text = f"Tingkat Urgensi: Waspada &bull; Potensi Keganasan ({pct_ganas:.1f}%) Melampaui Batas Toleransi"
-                urgency_class = "malignant"
+                meter_desc = f"Akumulasi potensi keganasan tercatat sebesar <strong>{pct_ganas:.2f}%</strong>, <strong>melampaui batas ambang toleransi triase ({ambang * 100:.1f}%)</strong>. Kasus ini diprioritaskan untuk rujukan spesialis dan pemeriksaan histopatologi lanjutan."
             else:
                 card_class = "benign"
-                badge_text = "✓ Indikasi Lesi Jinak (Non-Kanker)"
+                badge_text = f"🟢 TRIASE: DI BAWAH AMBANG RUJUKAN ({pct_ganas:.1f}% < {ambang*100:.1f}%)"
                 badge_class = "benign"
-                urgency_text = "Tingkat Urgensi: Rendah &bull; Pemantauan Mandiri Rutin (Aturan ABCDE)"
+                if is_top_malignant:
+                    urgency_text = f"Tingkat Urgensi: Ditangguhkan &bull; Di Bawah Ambang Toleransi ({ambang*100:.1f}%), namun Lesi Teridentifikasi {tag_text}"
+                    meter_desc = f"Akumulasi potensi keganasan tercatat sebesar <strong>{pct_ganas:.2f}%</strong>, berada <strong>di bawah batas ambang rujukan ({ambang * 100:.1f}%)</strong>. Alarm rujukan otomatis dinonaktifkan pada pengaturan ambang ini, namun konsultasi spesialis tetap disarankan karena lesi terindikasi <strong>{top_nama}</strong>."
+                else:
+                    urgency_text = "Tingkat Urgensi: Rendah &bull; Pemantauan Mandiri Rutin (Aturan ABCDE)"
+                    meter_desc = f"Akumulasi potensi keganasan berada pada tingkat rendah, yaitu <strong>{pct_ganas:.2f}%</strong> (di bawah batas ambang rujukan {ambang * 100:.1f}%). Lesi terindikasi jinak/non-kanker."
                 urgency_class = "benign"
 
             # 3. Label Tingkat Risiko Absolut pada Meter
@@ -1002,15 +1010,7 @@ if citra_bgr is not None:
                 meter_stat_color = "#15803D"
                 meter_fill_color = "#10B981"
 
-            if exceeds_threshold:
-                threshold_status = f"Melampaui Ambang ({ambang * 100:.1f}%)"
-                meter_desc = f"Akumulasi potensi keganasan tercatat sebesar <strong>{pct_ganas:.2f}%</strong> ({risk_level_label}), melampaui batas ambang rujukan ({ambang * 100:.1f}%). Sistem mendeteksi profil risiko tinggi yang memerlukan konfirmasi pemeriksaan histopatologi."
-            else:
-                threshold_status = f"Di Bawah Ambang ({ambang * 100:.1f}%)"
-                if is_top_malignant:
-                    meter_desc = f"Akumulasi potensi keganasan tercatat sebesar <strong>{pct_ganas:.2f}%</strong> ({threshold_status}). Namun karena jenis lesi terklasifikasi sebagai <strong>{top_nama}</strong>, konsultasi klinis spesialis tetap diperlukan."
-                else:
-                    meter_desc = f"Akumulasi potensi keganasan berada pada tingkat rendah, yaitu <strong>{pct_ganas:.2f}%</strong> (di bawah batas ambang {ambang * 100:.1f}%). Lesi terindikasi jinak/non-kanker."
+            threshold_status = f"Melampaui Ambang ({ambang * 100:.1f}%)" if exceeds_threshold else f"Di Bawah Ambang ({ambang * 100:.1f}%)"
 
             st.markdown(f"""
             <div class="ds-diagnosis-card {card_class}">

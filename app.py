@@ -9,6 +9,7 @@ import pandas as pd
 import streamlit as st
 from PIL import Image
 from pathlib import Path
+import base64
 
 import torch
 import torch.nn as nn
@@ -912,8 +913,8 @@ with st.container(border=True):
     with col_prev:
         if citra_bgr is not None:
             tahap = proses_citra(citra_bgr)
-            st.image(tahap["asli_rgb"], width=230)
-            st.markdown(f'<div class="ds-image-caption">Pratinjau: <strong>{label_sumber}</strong> ({tahap["orig_w"]}×{tahap["orig_h"]} px)</div>', unsafe_allow_html=True)
+            _, buf_img = cv2.imencode('.jpg', citra_bgr)
+            img_b64 = base64.b64encode(buf_img).decode('utf-8')
             
             # Pra-pemeriksaan Kualitas Citra (Pre-flight Quality Check)
             q = tahap["kualitas"]
@@ -923,15 +924,21 @@ with st.container(border=True):
             q_icon = "✓" if q["lulus"] else "⚠️"
             
             st.markdown(f"""
-            <div style="background:{q_bg}; border:1px solid {q_border}; border-radius:6px; padding:0.40rem 0.65rem; margin-top:0.45rem; font-size:0.73rem; color:{q_color}; font-weight:600; display:flex; align-items:center; justify-content:center; gap:0.45rem;">
-                <span>{q_icon}</span>
-                <span>{q["pesan"]} (Skor Fokus: {q['skor_fokus']:.1f})</span>
+            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 1.1rem 1.0rem; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);">
+                <img src="data:image/jpeg;base64,{img_b64}" style="width: 280px; max-height: 240px; object-fit: contain; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); display: block; margin: 0 auto;" />
+                <div style="font-size: 0.78rem; color: #64748B; font-weight: 600; margin-top: 0.65rem; text-align: center;">
+                    Pratinjau: <strong>{label_sumber}</strong> ({tahap["orig_w"]}×{tahap["orig_h"]} px)
+                </div>
+                <div style="background:{q_bg}; border:1px solid {q_border}; border-radius:6px; padding:0.40rem 0.75rem; margin-top:0.55rem; font-size:0.73rem; color:{q_color}; font-weight:600; display:flex; align-items:center; justify-content:center; gap:0.45rem; width: 100%; max-width: 340px; text-align:center;">
+                    <span>{q_icon}</span>
+                    <span>{q["pesan"]} (Skor Fokus: {q['skor_fokus']:.1f})</span>
+                </div>
             </div>
             """, unsafe_allow_html=True)
         else:
             st.markdown("""
-            <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:10px; padding: 3.0rem 1rem; color: #94A3B8; text-align:center;">
-                <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">📷</div>
+            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 3.2rem 1.0rem; color: #94A3B8; text-align: center;">
+                <div style="font-size: 2.4rem; margin-bottom: 0.5rem;">📷</div>
                 <div style="font-size: 0.88rem; font-weight: 600;">Belum ada citra yang dipilih</div>
                 <div style="font-size: 0.78rem;">Pilih sampel klinis atau unggah berkas foto</div>
             </div>

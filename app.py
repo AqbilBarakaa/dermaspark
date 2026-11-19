@@ -133,26 +133,25 @@ html, body, [class*="css"] {
 }
 
 /* Frame Pratinjau Citra */
-.ds-image-frame {
-    background: #F8FAFC;
-    border: 1px solid #E2E8F0;
-    border-radius: 10px;
-    padding: 0.65rem;
-    text-align: center;
+[data-testid="stImage"] {
+    display: flex !important;
+    justify-content: center !important;
 }
-.ds-image-frame img {
-    max-height: 380px !important;
+[data-testid="stImage"] img {
+    max-height: 270px !important;
     width: auto !important;
     max-width: 100% !important;
     object-fit: contain !important;
-    margin: 0 auto;
-    border-radius: 6px;
+    margin: 0 auto !important;
+    border-radius: 8px !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 .ds-image-caption {
     font-size: 0.78rem;
     color: #64748B;
     margin-top: 0.45rem;
     font-weight: 500;
+    text-align: center;
 }
 
 /* Tingkat 2: Banner Diagnosis Utama */
@@ -838,7 +837,7 @@ with st.container(border=True):
     </div>
     """, unsafe_allow_html=True)
 
-    col_ctrl, col_prev = st.columns([1.1, 0.9], gap="large")
+    col_ctrl, col_prev = st.columns([1.5, 1.0], gap="large")
 
     with col_ctrl:
         mode = st.radio(
@@ -912,8 +911,7 @@ with st.container(border=True):
     with col_prev:
         if citra_bgr is not None:
             tahap = proses_citra(citra_bgr)
-            st.markdown('<div class="ds-image-frame">', unsafe_allow_html=True)
-            st.image(tahap["asli_rgb"], use_container_width=True)
+            st.image(tahap["asli_rgb"], width=280)
             st.markdown(f'<div class="ds-image-caption">Pratinjau: <strong>{label_sumber}</strong> ({tahap["orig_w"]}×{tahap["orig_h"]} px)</div>', unsafe_allow_html=True)
             
             # Pra-pemeriksaan Kualitas Citra (Pre-flight Quality Check)
@@ -924,15 +922,14 @@ with st.container(border=True):
             q_icon = "✓" if q["lulus"] else "⚠️"
             
             st.markdown(f"""
-            <div style="background:{q_bg}; border:1px solid {q_border}; border-radius:6px; padding:0.40rem 0.65rem; margin-top:0.50rem; font-size:0.73rem; color:{q_color}; font-weight:600; display:flex; align-items:center; gap:0.45rem;">
+            <div style="background:{q_bg}; border:1px solid {q_border}; border-radius:6px; padding:0.40rem 0.65rem; margin-top:0.45rem; font-size:0.73rem; color:{q_color}; font-weight:600; display:flex; align-items:center; justify-content:center; gap:0.45rem;">
                 <span>{q_icon}</span>
                 <span>{q["pesan"]} (Skor Fokus: {q['skor_fokus']:.1f})</span>
-            </div>
             </div>
             """, unsafe_allow_html=True)
         else:
             st.markdown("""
-            <div class="ds-image-frame" style="padding: 3.5rem 1rem; color: #94A3B8;">
+            <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:10px; padding: 3.0rem 1rem; color: #94A3B8; text-align:center;">
                 <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">📷</div>
                 <div style="font-size: 0.88rem; font-weight: 600;">Belum ada citra yang dipilih</div>
                 <div style="font-size: 0.78rem;">Pilih sampel klinis atau unggah berkas foto</div>

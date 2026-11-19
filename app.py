@@ -38,7 +38,7 @@ html, body, [class*="css"] {
 }
 
 .block-container {
-    padding-top: 1.2rem !important;
+    padding-top: 4.2rem !important;
     padding-bottom: 2.5rem !important;
     padding-left: 2.0rem !important;
     padding-right: 2.0rem !important;
@@ -51,7 +51,8 @@ html, body, [class*="css"] {
     background: #FFFFFF;
     border: 1px solid #E2E8F0;
     border-radius: 14px;
-    padding: 1.1rem 1.5rem;
+    padding: 1.15rem 1.6rem;
+    margin-top: 0.25rem;
     margin-bottom: 1.25rem;
     display: flex;
     align-items: center;
@@ -61,25 +62,25 @@ html, body, [class*="css"] {
 .ds-header-left {
     display: flex;
     align-items: center;
-    gap: 0.85rem;
+    gap: 0.95rem;
 }
 .ds-header-icon {
-    font-size: 1.8rem;
+    font-size: 1.75rem;
     background: #EFF6FF;
     border: 1px solid #DBEAFE;
-    width: 44px;
-    height: 44px;
+    width: 48px;
+    height: 48px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 10px;
+    border-radius: 12px;
 }
 .ds-header-title {
-    font-size: 1.35rem;
+    font-size: 1.45rem;
     font-weight: 800;
     color: #0F172A;
-    letter-spacing: -0.02em;
-    line-height: 1.2;
+    letter-spacing: -0.01em;
+    line-height: 1.35;
 }
 .ds-header-subtitle {
     font-size: 0.82rem;
@@ -146,7 +147,7 @@ html, body, [class*="css"] {
     margin-left: auto !important;
     margin-right: auto !important;
     display: block !important;
-    max-height: 270px !important;
+    max-height: 230px !important;
     width: auto !important;
     max-width: 100% !important;
     object-fit: contain !important;
@@ -814,13 +815,7 @@ def muat_model():
 st.markdown("""
 <div class="ds-header">
     <div class="ds-header-left">
-        <div class="ds-header-icon" title="Dermaspark - Skin & AI Intelligence">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M3 13.5C6.5 11.5 9.5 11.5 12 13.5C14.5 15.5 17.5 15.5 21 13.5" stroke="#0284C7" stroke-width="2" stroke-linecap="round"/>
-                <path d="M3 18C6.5 16 9.5 16 12 18C14.5 20 17.5 20 21 18" stroke="#0284C7" stroke-width="1.8" stroke-linecap="round" stroke-opacity="0.5"/>
-                <path d="M12 2.5L13.3 6.8L17.5 8L13.3 9.2L12 13.5L10.7 9.2L6.5 8L10.7 6.8L12 2.5Z" fill="#0284C7"/>
-            </svg>
-        </div>
+        <div class="ds-header-icon" title="Analisis Histopatologi & AI">🔬</div>
         <div>
             <div class="ds-header-title">DERMASPARK</div>
             <div class="ds-header-subtitle">Sistem Skrining & Triase Citra Lesi Kulit berbasis Deep Learning</div>
@@ -843,7 +838,7 @@ with st.container(border=True):
     </div>
     """, unsafe_allow_html=True)
 
-    col_ctrl, col_prev = st.columns([1.15, 0.85], gap="large")
+    col_ctrl, col_prev = st.columns([1.55, 0.95], gap="large")
 
     with col_ctrl:
         mode = st.radio(
@@ -917,7 +912,7 @@ with st.container(border=True):
     with col_prev:
         if citra_bgr is not None:
             tahap = proses_citra(citra_bgr)
-            st.image(tahap["asli_rgb"], width=260)
+            st.image(tahap["asli_rgb"], width=230)
             st.markdown(f'<div class="ds-image-caption">Pratinjau: <strong>{label_sumber}</strong> ({tahap["orig_w"]}×{tahap["orig_h"]} px)</div>', unsafe_allow_html=True)
             
             # Pra-pemeriksaan Kualitas Citra (Pre-flight Quality Check)

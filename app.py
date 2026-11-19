@@ -136,13 +136,19 @@ html, body, [class*="css"] {
 [data-testid="stImage"] {
     display: flex !important;
     justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+    text-align: center !important;
+    margin: 0 auto !important;
 }
-[data-testid="stImage"] img {
+[data-testid="stImage"] > img, [data-testid="stImage"] img {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    display: block !important;
     max-height: 270px !important;
     width: auto !important;
     max-width: 100% !important;
     object-fit: contain !important;
-    margin: 0 auto !important;
     border-radius: 8px !important;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
@@ -911,7 +917,9 @@ with st.container(border=True):
     with col_prev:
         if citra_bgr is not None:
             tahap = proses_citra(citra_bgr)
-            st.image(tahap["asli_rgb"], width=280)
+            _, c_mid, _ = st.columns([1, 2.6, 1])
+            with c_mid:
+                st.image(tahap["asli_rgb"], use_container_width=True)
             st.markdown(f'<div class="ds-image-caption">Pratinjau: <strong>{label_sumber}</strong> ({tahap["orig_w"]}×{tahap["orig_h"]} px)</div>', unsafe_allow_html=True)
             
             # Pra-pemeriksaan Kualitas Citra (Pre-flight Quality Check)

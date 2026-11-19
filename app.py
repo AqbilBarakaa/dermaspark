@@ -38,9 +38,11 @@ html, body, [class*="css"] {
 }
 
 .block-container {
-    padding-top: 1.4rem !important;
-    padding-bottom: 3.0rem !important;
-    max-width: 1040px !important;
+    padding-top: 1.2rem !important;
+    padding-bottom: 2.5rem !important;
+    padding-left: 2.5rem !important;
+    padding-right: 2.5rem !important;
+    max-width: 100% !important;
 }
 
 /* Header Aplikasi Medis */
@@ -137,6 +139,14 @@ html, body, [class*="css"] {
     border-radius: 10px;
     padding: 0.65rem;
     text-align: center;
+}
+.ds-image-frame img {
+    max-height: 380px !important;
+    width: auto !important;
+    max-width: 100% !important;
+    object-fit: contain !important;
+    margin: 0 auto;
+    border-radius: 6px;
 }
 .ds-image-caption {
     font-size: 0.78rem;

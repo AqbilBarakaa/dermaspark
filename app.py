@@ -851,8 +851,26 @@ with st.container(border=True):
                 label_sumber = f"Berkas: {file_up.name}"
 
         with st.expander("⚙️ Ambang Batas Triase Klinis (Threshold)", expanded=False):
-            ambang = st.slider("Batas Keganasan Minimum:", 0.0, 1.0, 0.42, 0.01)
-            st.caption("Nilai ambang batas terkalibrasi optimal: **0,42**. Akumulasi probabilitas keganasan $\ge 0,42$ dikategorikan sebagai Indikasi Ganas.")
+            if "ambang_val" not in st.session_state:
+                st.session_state.ambang_val = 0.42
+
+            col_sl, col_rst = st.columns([3, 1])
+            with col_sl:
+                ambang = st.slider(
+                    "Batas Keganasan Minimum:",
+                    min_value=0.10,
+                    max_value=0.90,
+                    value=st.session_state.ambang_val,
+                    step=0.01,
+                    help="Ambang batas probabilitas keganasan untuk memicu alarm rujukan spesialis."
+                )
+            with col_rst:
+                st.write("")
+                if st.button("Reset (0.42)", help="Kembalikan ke ambang batas optimal terkalibrasi (0.42)"):
+                    st.session_state.ambang_val = 0.42
+                    st.rerun()
+
+            st.caption("Nilai ambang batas optimal terkalibrasi: **0,42**. Akumulasi probabilitas keganasan $\ge 0,42$ memicu alarm rujukan triase.")
 
     with col_prev:
         if citra_bgr is not None:
@@ -925,35 +943,69 @@ if citra_bgr is not None:
             </div>
             """, unsafe_allow_html=True)
 
-            # Kartu Status Diagnosis
-            if is_ganas:
+            # Pemisahan Status Biologis Lesi vs Status Alarm Triase
+            is_top_malignant = ("Ganas" in top_kat)
+            is_akiec = (top_k == "AKIEC")
+            pct_ganas = prob_ganas * 100
+            exceeds_threshold = (prob_ganas >= ambang)
+
+            # 1. Kategori Biologis Lesi (Terkunci pada hasil model, tidak terdistorsi slider)
+            if is_akiec:
+                tag_text = "Pra-Kanker"
+                tag_bg = "#FEF3C7"
+                tag_color = "#92400E"
+            elif is_top_malignant:
+                tag_text = "Ganas (Kanker)"
+                tag_bg = "#FEE2E2"
+                tag_color = "#991B1B"
+            else:
+                tag_text = "Jinak (Benign)"
+                tag_bg = "#DCFCE7"
+                tag_color = "#166534"
+
+            # 2. Status Alarm Triase & Tingkat Urgensi
+            if is_top_malignant:
                 card_class = "malignant"
-                badge_text = "⚠️ Indikasi Risiko Tinggi (Ganas)"
+                badge_text = "⚠️ Indikasi Lesi Kanker / Pra-Kanker Terdeteksi"
                 badge_class = "malignant"
                 urgency_text = "Tingkat Urgensi: Tinggi &bull; Rujukan Spesialis Dermatologi & Evaluasi Biopsi Jaringan"
                 urgency_class = "malignant"
-                tag_bg = "#FEE2E2"
-                tag_color = "#991B1B"
-                tag_text = "Ganas / Pra-Kanker"
+            elif exceeds_threshold:
+                card_class = "malignant"
+                badge_text = f"⚠️ Waspada: Akumulasi Keganasan Melebihi Ambang Triase ({ambang*100:.1f}%)"
+                badge_class = "malignant"
+                urgency_text = f"Tingkat Urgensi: Waspada &bull; Potensi Keganasan ({pct_ganas:.1f}%) Melampaui Batas Toleransi"
+                urgency_class = "malignant"
             else:
                 card_class = "benign"
-                badge_text = "✓ Indikasi Risiko Rendah (Jinak)"
+                badge_text = "✓ Indikasi Lesi Jinak (Non-Kanker)"
                 badge_class = "benign"
                 urgency_text = "Tingkat Urgensi: Rendah &bull; Pemantauan Mandiri Rutin (Aturan ABCDE)"
                 urgency_class = "benign"
-                tag_bg = "#DCFCE7"
-                tag_color = "#166534"
-                tag_text = "Non-Kanker (Jinak)"
 
-            # Visual Risk Meter
-            pct_ganas = prob_ganas * 100
-            meter_fill_color = "#E11D48" if is_ganas else "#10B981"
-            meter_stat_color = "#BE123C" if is_ganas else "#15803D"
-
-            if is_ganas:
-                meter_desc = f"Akumulasi potensi keganasan tercatat sebesar <strong>{pct_ganas:.2f}%</strong>, melampaui batas ambang klinis ({ambang * 100:.1f}%). Sistem mendeteksi profil lesi berisiko tinggi. Diperlukan konfirmasi pemeriksaan histopatologi definitif."
+            # 3. Label Tingkat Risiko Absolut pada Meter
+            if pct_ganas >= 50.0:
+                risk_level_label = "POTENSI TINGGI"
+                meter_stat_color = "#BE123C"
+                meter_fill_color = "#E11D48"
+            elif pct_ganas >= 20.0:
+                risk_level_label = "POTENSI SEDANG"
+                meter_stat_color = "#B45309"
+                meter_fill_color = "#F59E0B"
             else:
-                meter_desc = f"Akumulasi potensi keganasan berada pada tingkat rendah, yaitu <strong>{pct_ganas:.2f}%</strong> (di bawah batas ambang {ambang * 100:.1f}%). Lesi diklasifikasikan sebagai non-kanker/jinak. Tetap lakukan observasi mandiri berkala."
+                risk_level_label = "POTENSI RENDAH"
+                meter_stat_color = "#15803D"
+                meter_fill_color = "#10B981"
+
+            if exceeds_threshold:
+                threshold_status = f"Melampaui Ambang ({ambang * 100:.1f}%)"
+                meter_desc = f"Akumulasi potensi keganasan tercatat sebesar <strong>{pct_ganas:.2f}%</strong> ({risk_level_label}), melampaui batas ambang rujukan ({ambang * 100:.1f}%). Sistem mendeteksi profil risiko tinggi yang memerlukan konfirmasi pemeriksaan histopatologi."
+            else:
+                threshold_status = f"Di Bawah Ambang ({ambang * 100:.1f}%)"
+                if is_top_malignant:
+                    meter_desc = f"Akumulasi potensi keganasan tercatat sebesar <strong>{pct_ganas:.2f}%</strong> ({threshold_status}). Namun karena jenis lesi terklasifikasi sebagai <strong>{top_nama}</strong>, konsultasi klinis spesialis tetap diperlukan."
+                else:
+                    meter_desc = f"Akumulasi potensi keganasan berada pada tingkat rendah, yaitu <strong>{pct_ganas:.2f}%</strong> (di bawah batas ambang {ambang * 100:.1f}%). Lesi terindikasi jinak/non-kanker."
 
             st.markdown(f"""
             <div class="ds-diagnosis-card {card_class}">
@@ -973,18 +1025,18 @@ if citra_bgr is not None:
                 <div class="ds-meter-header">
                     <span class="ds-meter-title">Meter Estimasi Potensi Keganasan (Cancer Risk Meter)</span>
                     <span class="ds-meter-stat" style="color: {meter_stat_color};">
-                        {pct_ganas:.2f}% {"(RISIKO TINGGI)" if is_ganas else "(RISIKO RENDAH)"}
+                        {pct_ganas:.2f}% ({risk_level_label} &bull; {threshold_status})
                     </span>
                 </div>
                 <div class="ds-meter-track">
-                    <div class="ds-meter-zone-safe"></div>
-                    <div class="ds-meter-zone-alert"></div>
+                    <div class="ds-meter-zone-safe" style="width: {ambang * 100:.1f}%;"></div>
+                    <div class="ds-meter-zone-alert" style="width: {100 - ambang * 100:.1f}%;"></div>
                     <div class="ds-meter-fill" style="width: {min(100.0, pct_ganas):.2f}%; background: {meter_fill_color}; opacity: 0.88;"></div>
                 </div>
                 <div class="ds-meter-labels">
-                    <span>0% (Zona Aman / Jinak)</span>
+                    <span>0% (Zona Rendah)</span>
                     <span style="color: #475569; font-weight: 700;">| Ambang Batas Triase: {ambang * 100:.1f}%</span>
-                    <span>100% (Zona Keganasan Tinggi)</span>
+                    <span>100% (Zona Tinggi)</span>
                 </div>
                 <div class="ds-meter-explanation">{meter_desc}</div>
             </div>

@@ -851,8 +851,11 @@ with st.container(border=True):
                 label_sumber = f"Berkas: {file_up.name}"
 
         with st.expander("⚙️ Ambang Batas Triase Klinis (Threshold)", expanded=False):
-            if "ambang_val" not in st.session_state:
-                st.session_state.ambang_val = 0.42
+            if "ambang_keganasan" not in st.session_state:
+                st.session_state.ambang_keganasan = 0.42
+
+            def reset_ambang_callback():
+                st.session_state.ambang_keganasan = 0.42
 
             col_sl, col_rst = st.columns([3, 1])
             with col_sl:
@@ -860,15 +863,17 @@ with st.container(border=True):
                     "Batas Keganasan Minimum:",
                     min_value=0.10,
                     max_value=0.90,
-                    value=st.session_state.ambang_val,
                     step=0.01,
+                    key="ambang_keganasan",
                     help="Ambang batas probabilitas keganasan untuk memicu alarm rujukan spesialis."
                 )
             with col_rst:
                 st.write("")
-                if st.button("Reset (0.42)", help="Kembalikan ke ambang batas optimal terkalibrasi (0.42)"):
-                    st.session_state.ambang_val = 0.42
-                    st.rerun()
+                st.button(
+                    "Reset (0.42)",
+                    on_click=reset_ambang_callback,
+                    help="Kembalikan ke ambang batas optimal terkalibrasi (0.42)"
+                )
 
             st.caption("Nilai ambang batas optimal terkalibrasi: **0,42**. Akumulasi probabilitas keganasan $\ge 0,42$ memicu alarm rujukan triase.")
 

@@ -839,7 +839,7 @@ with st.container(border=True):
     </div>
     """, unsafe_allow_html=True)
 
-    col_ctrl, col_prev = st.columns([1.2, 1.0], gap="large")
+    col_ctrl, col_prev = st.columns([1.15, 1.0], gap="large")
 
     with col_ctrl:
         mode = st.radio(
@@ -920,11 +920,11 @@ with st.container(border=True):
             orig_h = tahap["orig_h"]
             ar = orig_w / max(orig_h, 1)
 
-            # Dimensi pratinjau klinis optimal: lebih besar & jelas, menjaga rasio aspek murni
-            target_h = 300
+            # Dimensi pratinjau klinis optimal: proporsional penuh sejajar dengan panel kontrol
+            target_h = 340
             target_w = int(round(target_h * ar))
-            if target_w > 420:
-                target_w = 420
+            if target_w > 460:
+                target_w = 460
                 target_h = int(round(target_w / ar))
 
             # Pra-pemeriksaan Kualitas Citra (Pre-flight Quality Check)
@@ -935,14 +935,14 @@ with st.container(border=True):
             q_icon = "✓" if q["lulus"] else "⚠️"
             
             st.markdown(f"""
-            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; padding: 0.2rem 0;">
-                <div style="display: inline-block; padding: 6px; background: #FFFFFF; border: 1px solid #CBD5E1; border-radius: 12px; box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);">
-                    <img src="data:image/jpeg;base64,{img_b64}" style="width: {target_w}px; height: {target_h}px; max-width: 100%; display: block; border-radius: 8px; object-fit: contain;" />
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; padding: 0.15rem 0;">
+                <div style="display: inline-block; padding: 6px; background: #FFFFFF; border: 1px solid #CBD5E1; border-radius: 12px; box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08); max-width: 100%;">
+                    <img src="data:image/jpeg;base64,{img_b64}" style="width: {target_w}px; max-width: 100%; height: auto; aspect-ratio: {orig_w} / {orig_h}; display: block; border-radius: 8px; object-fit: contain;" />
                 </div>
-                <div style="font-size: 0.80rem; color: #64748B; font-weight: 600; margin-top: 0.60rem; text-align: center;">
+                <div style="font-size: 0.80rem; color: #64748B; font-weight: 600; margin-top: 0.55rem; text-align: center;">
                     Pratinjau: <strong>{label_sumber}</strong> ({tahap["orig_w"]}×{tahap["orig_h"]} px)
                 </div>
-                <div style="background: {q_bg}; border: 1px solid {q_border}; border-radius: 9999px; padding: 0.38rem 0.95rem; margin-top: 0.50rem; font-size: 0.74rem; color: {q_color}; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);">
+                <div style="background: {q_bg}; border: 1px solid {q_border}; border-radius: 9999px; padding: 0.38rem 0.95rem; margin-top: 0.45rem; font-size: 0.74rem; color: {q_color}; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);">
                     <span>{q_icon}</span>
                     <span>{q["pesan"]} (Skor Fokus: {q['skor_fokus']:.1f})</span>
                 </div>

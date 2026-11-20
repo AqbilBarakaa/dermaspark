@@ -259,6 +259,7 @@ html, body, [class*="css"] {
     border: 1px solid #E2E8F0;
     border-radius: 12px;
     padding: 1.15rem 1.35rem;
+    margin-bottom: 1.15rem;
 }
 .ds-meter-header {
     display: flex;

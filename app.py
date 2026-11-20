@@ -512,7 +512,8 @@ html, body, [class*="css"] {
     font-size: 0.75rem;
     color: #475569;
     line-height: 1.5;
-    margin-top: 1.0rem;
+    margin-top: 0.15rem;
+    margin-bottom: 1.15rem;
     display: flex;
     align-items: center;
     gap: 0.65rem;
@@ -1106,7 +1107,7 @@ if citra_bgr is not None:
 
             # Catatan Disclaimer Klinis
             st.markdown("""
-            <div class="ds-disclaimer-card">
+            <div class="ds-disclaimer-card" style="margin-top: 0.15rem !important; margin-bottom: 1.15rem !important;">
                 <div style="font-size: 1.15rem;">⚕️</div>
                 <div>
                     <strong>Instrumen Penunjang Keputusan Klinis (Clinical Decision Support):</strong>

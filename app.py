@@ -1070,7 +1070,7 @@ if citra_bgr is not None:
                 </div>
             </div>
 
-            <div class="ds-risk-meter-container">
+            <div class="ds-risk-meter-container" style="margin-bottom: 1.15rem !important;">
                 <div class="ds-meter-header">
                     <span class="ds-meter-title">Meter Estimasi Potensi Keganasan (Cancer Risk Meter)</span>
                     <span class="ds-meter-stat" style="color: {meter_stat_color};">

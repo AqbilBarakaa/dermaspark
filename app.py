@@ -839,7 +839,7 @@ with st.container(border=True):
     </div>
     """, unsafe_allow_html=True)
 
-    col_ctrl, col_prev = st.columns([1.15, 1.0], gap="large")
+    col_ctrl, col_prev = st.columns([1.08, 1.0], gap="large")
 
     with col_ctrl:
         mode = st.radio(
@@ -920,11 +920,11 @@ with st.container(border=True):
             orig_h = tahap["orig_h"]
             ar = orig_w / max(orig_h, 1)
 
-            # Dimensi pratinjau klinis optimal: proporsional penuh sejajar dengan panel kontrol
-            target_h = 340
+            # Dimensi pratinjau klinis optimal: proporsional penuh diperbesar sejajar tinggi panel saat ambang dibuka
+            target_h = 390
             target_w = int(round(target_h * ar))
-            if target_w > 460:
-                target_w = 460
+            if target_w > 525:
+                target_w = 525
                 target_h = int(round(target_w / ar))
 
             # Pra-pemeriksaan Kualitas Citra (Pre-flight Quality Check)
@@ -935,7 +935,7 @@ with st.container(border=True):
             q_icon = "✓" if q["lulus"] else "⚠️"
             
             st.markdown(f"""
-            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; padding: 0.15rem 0;">
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; padding: 0.2rem 0 1.25rem 0;">
                 <div style="display: inline-block; padding: 6px; background: #FFFFFF; border: 1px solid #CBD5E1; border-radius: 12px; box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08); max-width: 100%;">
                     <img src="data:image/jpeg;base64,{img_b64}" style="width: {target_w}px; max-width: 100%; height: auto; aspect-ratio: {orig_w} / {orig_h}; display: block; border-radius: 8px; object-fit: contain;" />
                 </div>
